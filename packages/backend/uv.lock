@@ -772,7 +772,7 @@ requires-dist = [
     { name = "httpx", marker = "extra == 'dev'", specifier = "==0.28.1" },
     { name = "jsonschema", specifier = "==4.26.0" },
     { name = "mne", specifier = "==1.13.2" },
-    { name = "mne-bids", marker = "extra == 'bids'", specifier = "==0.13" },
+    { name = "mne-bids", marker = "extra == 'bids'", specifier = "==0.20.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = "==1.20.2" },
     { name = "numpy", specifier = "==2.5.4" },
     { name = "psycopg", extras = ["binary", "pool"], specifier = "==3.3.6" },
@@ -809,16 +809,16 @@ wheels = [
 
 [[package]]
 name = "mne-bids"
-version = "0.13"
+version = "0.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mne" },
     { name = "numpy" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/57/ab/b3f9dbc64cdeb9f7caab2bea9519a3ed62a1a5094b973e19594a012d89e7/mne-bids-0.13.tar.gz", hash = "sha256:5c0217e11d06175c98f26285c61bf28f13d38a39b056ad8e6a7ce2e33c3df766", size = 1226090, upload-time = "2023-08-21T11:37:47.237Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/68/86/fee96dbc4664e3fec6c98739870eded9fc08fdcbbc4509b205e59b74fb2f/mne_bids-0.20.0.tar.gz", hash = "sha256:8d196664a2f0a3bd2d5afd41777cf6cf43606201c3b9118ab43dc92758681c23", size = 163873, upload-time = "2026-09-29T00:00:56.019Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/95/8e/bc9e2aba2479311bf1278c378a736f9cfd3d8db62df788b3a8d06e6a41b0/mne_bids-0.13-py2.py3-none-any.whl", hash = "sha256:540374d9f07948679bdef7831b9861b9e4c9ea96f8c33a7c2e2245a6ac80f8ee", size = 1210162, upload-time = "2023-08-21T11:37:41.512Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/42/05928f81af2d0ceddfcbf2153e60bca7b6e3412c9dfe703b64a91f1e3a96/mne_bids-0.20.0-py3-none-any.whl", hash = "sha256:f4ffa7071b5f6f3472cfe6b5f538010b01560df8f0a7b2b4e1abeb7d09b915d0", size = 202484, upload-time = "2026-09-29T00:00:54.01Z" },
 ]
 
 [[package]]
