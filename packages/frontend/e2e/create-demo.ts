@@ -135,6 +135,13 @@ async function main() {
     );
     console.log('Direct login response:', loginResp.status, loginResp.body);
 
+    // Test frontend session route
+    const sessionResp = await callApi<{ access_token: string }>('/api/session', '', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'demo@meg-lab.local', password: 'demopassword123' }),
+    });
+    console.log('Frontend session response:', sessionResp.status, sessionResp.body);
+
     // Now login via the login form
     await page.getByLabel('Email address').fill('demo@meg-lab.local');
     await page.getByLabel('Password').fill('demopassword123');

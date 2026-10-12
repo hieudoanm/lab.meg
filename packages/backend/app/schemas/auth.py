@@ -18,8 +18,10 @@ class LoginRequest(BaseModel):
 
 
 class LoginResponse(BaseModel):
-    user: UserPublic
+    access_token: str
+    token_type: str = "Bearer"
     expires_at: str | None = None
+    user: UserPublic
 
 
 class RegisterRequest(BaseModel):

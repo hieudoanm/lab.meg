@@ -2,7 +2,7 @@ name: meg-lab
 
 services:
   postgres:
-    image: postgres:18-alpine
+    image: postgres:17-alpine
     environment:
       POSTGRES_USER: meglab
       POSTGRES_PASSWORD: meglab

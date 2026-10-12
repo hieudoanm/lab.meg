@@ -75,7 +75,12 @@ async def login(
         conn, request, user_agent=user_agent, ip_address=ip_address
     )
     _set_session_cookie(response, token)
-    return LoginResponse(user=user, expires_at=_expires_at())
+    return LoginResponse(
+        access_token=token,
+        token_type="Bearer",
+        expires_at=_expires_at(),
+        user=user,
+    )
 
 
 @router.post("/auth/logout", status_code=204)
@@ -103,7 +108,12 @@ async def register(
         conn, request, user_agent=user_agent, ip_address=ip_address
     )
     _set_session_cookie(response, token)
-    return LoginResponse(user=user, expires_at=_expires_at())
+    return LoginResponse(
+        access_token=token,
+        token_type="Bearer",
+        expires_at=_expires_at(),
+        user=user,
+    )
 
 
 @router.post("/auth/password-reset")
