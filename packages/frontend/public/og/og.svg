@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#0b0f14"/>
+  <defs>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#1e293b" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.45"/>
+  <g transform="translate(600, 315)" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">
+    <text x="0" y="-92" font-size="58" font-weight="700" fill="white" letter-spacing="-0.02em">MEG Lab</text>
+    <text x="0" y="-36" font-size="24" font-weight="400" fill="#94a3b8">Computational Electrophysiology Workbench</text>
+    <g font-size="16" font-weight="500" transform="translate(0, 20)">
+      <rect x="-280" y="-18" rx="8" width="170" height="36" fill="#38bdf8" opacity="0.16" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="-195" y="6" fill="#38bdf8">Projects and Data</text>
+      <rect x="-55" y="-18" rx="8" width="110" height="36" fill="#a78bfa" opacity="0.16" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="0" y="6" fill="#a78bfa">Signal View</text>
+      <rect x="115" y="-18" rx="8" width="170" height="36" fill="#34d399" opacity="0.16" stroke="#34d399" stroke-width="1.5"/>
+      <text x="200" y="6" fill="#34d399">Reproducible Runs</text>
+    </g>
+    <text x="0" y="92" font-size="18" font-weight="400" fill="#94a3b8">Manage MEG recordings, explore sensor geometry, and run traceable analyses.</text>
+    <g font-size="13" font-weight="500" transform="translate(0, 142)">
+      <rect x="-180" y="-12" rx="6" width="70" height="24" fill="#0b0f14" stroke="#334155" stroke-width="1"/>
+      <text x="-145" y="3" fill="#94a3b8">Next.js</text>
+      <rect x="-100" y="-12" rx="6" width="60" height="24" fill="#0b0f14" stroke="#334155" stroke-width="1"/>
+      <text x="-70" y="3" fill="#94a3b8">FastAPI</text>
+      <rect x="-30" y="-12" rx="6" width="85" height="24" fill="#0b0f14" stroke="#334155" stroke-width="1"/>
+      <text x="12" y="3" fill="#94a3b8">MNE-Python</text>
+      <rect x="65" y="-12" rx="6" width="75" height="24" fill="#0b0f14" stroke="#334155" stroke-width="1"/>
+      <text x="102" y="3" fill="#94a3b8">Postgres</text>
+    </g>
+    <text x="0" y="198" font-size="16" font-weight="500" fill="#64748b">meg-lab.example.com</text>
+  </g>
+</svg>

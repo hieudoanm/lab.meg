@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en" data-theme="lab-light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MEG Lab — Pipelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+      @theme {
+        --color-base-100: #ffffff;
+        --color-base-200: #eef2f7;
+        --color-base-300: #dce3ec;
+        --color-base-content: #172033;
+        --color-primary: #4059c7;
+        --color-primary-content: #ffffff;
+        --color-secondary: #5b6578;
+        --color-secondary-content: #ffffff;
+        --color-accent: #4059c7;
+        --color-accent-content: #ffffff;
+        --color-info: #175cd3;
+        --color-info-content: #ffffff;
+        --color-success: #18794e;
+        --color-success-content: #ffffff;
+        --color-warning: #986500;
+        --color-warning-content: #ffffff;
+        --color-error: #b42318;
+        --color-error-content: #ffffff;
+        --color-background: #f6f8fb;
+        --color-surface: #ffffff;
+        --color-surface-muted: #eef2f7;
+        --color-surface-raised: #e2e8f0;
+        --color-text-primary: #172033;
+        --color-text-secondary: #5b6578;
+        --color-text-muted: #8a94a6;
+        --color-border: #dce3ec;
+        --color-border-strong: #c3cdd9;
+        --color-accent-hover: #3146a5;
+        --color-accent-muted: #e8ecfb;
+        --color-success-muted: #e1f4ec;
+        --color-warning-muted: #fbf0de;
+        --color-danger: #b42318;
+        --color-danger-muted: #fbeae9;
+        --color-info-muted: #e7eefc;
+        --color-neutral-state: #8a94a6;
+        --color-canvas: #eef2f7;
+        --color-focus-ring: #4059c7;
+        --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+      }
+    </style>
+<style>
+      [data-theme="lab-light"] {
+        color-scheme: light;
+        --color-base-100: #ffffff;
+        --color-base-200: #eef2f7;
+        --color-base-300: #dce3ec;
+        --color-base-content: #172033;
+        --color-primary: #4059c7;
+        --color-primary-content: #ffffff;
+        --color-secondary: #5b6578;
+        --color-secondary-content: #ffffff;
+        --color-accent: #4059c7;
+        --color-accent-content: #ffffff;
+        --color-neutral: #172033;
+        --color-neutral-content: #ffffff;
+        --color-info: #175cd3;
+        --color-info-content: #ffffff;
+        --color-success: #18794e;
+        --color-success-content: #ffffff;
+        --color-warning: #986500;
+        --color-warning-content: #ffffff;
+        --color-error: #b42318;
+        --color-error-content: #ffffff;
+        --color-background: #f6f8fb;
+        --color-surface: #ffffff;
+        --color-surface-muted: #eef2f7;
+        --color-surface-raised: #e2e8f0;
+        --color-text-primary: #172033;
+        --color-text-secondary: #5b6578;
+        --color-text-muted: #8a94a6;
+        --color-border: #dce3ec;
+        --color-border-strong: #c3cdd9;
+        --color-accent-hover: #3146a5;
+        --color-accent-muted: #e8ecfb;
+        --color-success-muted: #e1f4ec;
+        --color-warning-muted: #fbf0de;
+        --color-danger: #b42318;
+        --color-danger-muted: #fbeae9;
+        --color-info-muted: #e7eefc;
+        --color-neutral-state: #8a94a6;
+        --color-canvas: #eef2f7;
+        --color-focus-ring: #4059c7;
+        --color-trace-1: #4059c7;
+        --color-trace-2: #175cd3;
+        --color-trace-3: #18794e;
+        --color-trace-4: #986500;
+        --color-trace-5: #b42318;
+        --color-trace-6: #7c3aed;
+        --radius-selector: 9999rem;
+        --radius-field: 0.375rem;
+        --radius-box: 0.625rem;
+        --size-selector: 0.25rem;
+        --size-field: 0.25rem;
+      }
+      [data-theme="lab-dark"] {
+        color-scheme: dark;
+        --color-base-100: #121821;
+        --color-base-200: #1a2230;
+        --color-base-300: #263244;
+        --color-base-content: #e6edf5;
+        --color-primary: #4c8dff;
+        --color-primary-content: #0b0f14;
+        --color-secondary: #9ba9bc;
+        --color-secondary-content: #0b0f14;
+        --color-accent: #4c8dff;
+        --color-accent-content: #0b0f14;
+        --color-neutral: #212b3a;
+        --color-neutral-content: #e6edf5;
+        --color-info: #58a6ff;
+        --color-info-content: #0b0f14;
+        --color-success: #3fb950;
+        --color-success-content: #0b0f14;
+        --color-warning: #d9a441;
+        --color-warning-content: #0b0f14;
+        --color-error: #f0554d;
+        --color-error-content: #0b0f14;
+        --color-background: #0b0f14;
+        --color-surface: #121821;
+        --color-surface-muted: #1a2230;
+        --color-surface-raised: #212b3a;
+        --color-text-primary: #e6edf5;
+        --color-text-secondary: #9ba9bc;
+        --color-text-muted: #6b7a90;
+        --color-border: #263244;
+        --color-border-strong: #35455c;
+        --color-accent-hover: #6ba1ff;
+        --color-accent-muted: #1c3355;
+        --color-success-muted: #16301f;
+        --color-warning-muted: #33290f;
+        --color-danger: #f0554d;
+        --color-danger-muted: #3a1c1a;
+        --color-info-muted: #16283f;
+        --color-neutral-state: #5b6578;
+        --color-canvas: #05080b;
+        --color-focus-ring: #7fb2ff;
+        --color-trace-1: #4c8dff;
+        --color-trace-2: #58a6ff;
+        --color-trace-3: #3fb950;
+        --color-trace-4: #d9a441;
+        --color-trace-5: #f0554d;
+        --color-trace-6: #b07cff;
+        --radius-selector: 999px;
+        --radius-field: 6px;
+        --radius-box: 8px;
+      }
+      body {
+        background-color: var(--color-background);
+        color: var(--color-text-primary);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      :focus-visible {
+        outline: 2px solid var(--color-focus-ring);
+        outline-offset: 2px;
+      }
+      .focus-ring:focus-visible {
+        outline: 2px solid var(--color-focus-ring);
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+      .card {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+      }
+      .table :where(th, td) {
+        border-color: var(--color-border);
+      }
+      .table th {
+        color: var(--color-text-secondary);
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .menu li > a {
+        color: var(--color-text-secondary);
+      }
+      .menu li > a:hover {
+        background-color: var(--color-surface-muted);
+        color: var(--color-text-primary);
+      }
+      .signal-bg {
+        background-color: var(--color-canvas);
+      }
+      .theme-switcher {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 60;
+        display: flex;
+        gap: 0.25rem;
+        padding: 0.25rem;
+        border-radius: 999px;
+        border: 1px solid var(--color-base-300);
+        background: var(--color-base-100);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+      }
+      .theme-switcher button {
+        font: inherit;
+        font-size: 12px;
+        line-height: 1;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        border: 0;
+        background: transparent;
+        color: var(--color-base-content);
+        opacity: 0.65;
+        cursor: pointer;
+      }
+      .theme-switcher button[aria-pressed='true'] {
+        background: var(--color-base-200);
+        opacity: 1;
+      }
+    </style>
+</head>
+<body class="min-h-screen bg-background text-text-primary antialiased font-sans text-[14px] leading-[22px]">
+    <div class="theme-switcher" role="group" aria-label="Colour theme">
+      <button type="button" data-theme-value="lab-light" aria-pressed="true">Light</button>
+      <button type="button" data-theme-value="lab-dark" aria-pressed="false">Dark</button>
+    </div>
+    <script>
+      (function () {
+        var key = 'lab-theme';
+        function apply(theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+          Array.prototype.forEach.call(
+            document.querySelectorAll('.theme-switcher button'),
+            function (button) {
+              button.setAttribute(
+                'aria-pressed',
+                String(button.getAttribute('data-theme-value') === theme),
+              );
+            },
+          );
+        }
+        var stored = null;
+        try {
+          stored = window.localStorage.getItem(key);
+        } catch (error) {}
+        var initial = stored === 'lab-dark' || stored === 'lab-light' ? stored : 'lab-light';
+        apply(initial);
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.theme-switcher button'),
+          function (button) {
+            button.addEventListener('click', function () {
+              var theme = button.getAttribute('data-theme-value');
+              try {
+                window.localStorage.setItem(key, theme);
+              } catch (error) {}
+              apply(theme);
+            });
+          },
+        );
+      })();
+    </script>
+
+  <div class="flex min-h-screen">
+    <aside class="hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
+      <div class="flex h-14 items-center gap-2.5 border-b border-border px-4">
+        <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+        <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+      </div>
+      <nav class="flex-1 space-y-0.5 overflow-y-auto p-2 text-sm">
+        <a href="03-dashboard.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+        <a href="04-projects.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>Projects</a>
+        <a href="06-dataset-upload.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Datasets</a>
+        <a href="08-viewer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Signal Viewer</a>
+        <a href="09-sensor-explorer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg>Sensor Explorer</a>
+        <a href="10-pipelines.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 bg-accent-muted font-medium text-text-primary"><svg class="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3"/></svg>Pipelines</a>
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-3 3 3 3"/><path d="m16 9 3 3-3 3"/><path d="m13 5-2 14"/></svg>Notebooks</a>
+        <a href="14-explore.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg>Explore</a>
+        <a href="15-settings.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-text-secondary hover:bg-surface-muted hover:text-text-primary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8L9.4 5.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg>Settings</a>
+      </nav>
+      <div class="border-t border-border px-4 py-3 text-[11px] text-text-muted">v0.1.0 · prototype</div>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="sticky top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-border bg-surface px-4 md:px-6">
+        <div class="flex min-w-0 items-center gap-3">
+          <button class="focus-ring flex items-center gap-2 rounded-md border border-border bg-surface-muted px-3 py-1.5 text-[13px]"><span class="text-text-muted">Project</span><span class="font-medium">Auditory Evoked Fields</span><span class="rounded bg-accent-muted px-1.5 text-[11px] text-accent">private</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-3.5 w-3.5"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="hidden items-center gap-2 text-[12px] text-text-muted md:flex">
+            <span>/</span>
+            <span class="font-medium text-text-secondary">Pipelines</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="hidden items-center gap-2 rounded-md border border-border bg-surface-muted px-3 py-1.5 text-[13px] text-text-muted lg:flex">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" class="h-4 w-4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span>Search datasets, runs…</span>
+            <kbd class="ml-8 rounded border border-border px-1.5 text-[11px]">⌘K</kbd>
+          </div>
+          <button class="focus-ring relative flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface-muted text-text-secondary hover:text-text-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent"></span>
+          </button>
+          <div class="flex items-center gap-2 rounded-md border border-border bg-surface-muted py-1 pl-1 pr-2">
+            <div class="flex h-6 w-6 items-center justify-center rounded-md bg-accent-muted text-[11px] font-semibold text-accent">HD</div>
+            <span class="hidden text-[13px] text-text-secondary sm:inline">Hieu Doan</span>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 px-4 py-6 md:px-6">
+        <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <div class="mb-1 text-[12px] font-semibold uppercase tracking-wider text-text-muted">PIPELINES</div>
+            <h1 class="text-[28px] font-semibold leading-9 tracking-tight">Project pipelines</h1>
+            <p class="mt-1 max-w-2xl text-[14px] text-text-secondary">Manage reusable preprocessing and analysis templates built with MNE-Python. Published versions are immutable and can be used to submit runs.</p>
+          </div>
+          <button class="focus-ring inline-flex h-9 items-center gap-2 rounded-md bg-accent px-3.5 text-[13px] font-semibold text-background hover:bg-accent-hover">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4"><path d="M12 5v14M5 12h14"/></svg>
+            New pipeline
+          </button>
+        </div>
+
+        <div class="mb-6 card rounded-lg p-4">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <h2 class="text-[16px] font-semibold">Search &amp; filter</h2>
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 rounded-md border border-border bg-surface-muted px-2 py-1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" class="h-4 w-4 text-text-muted"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                <input class="h-7 w-64 bg-transparent text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none" placeholder="Search pipelines by name…" />
+              </div>
+              <select class="focus-ring h-8 rounded-md border border-border bg-surface-muted px-2 text-[13px] text-text-primary"><option>Status: all</option><option>Published</option><option>Draft</option><option>Deprecated</option></select>
+              <select class="focus-ring h-8 rounded-md border border-border bg-surface-muted px-2 text-[13px] text-text-primary"><option>Sort: updated (desc)</option><option>Created (desc)</option><option>Name (A-Z)</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <div class="mb-3 flex items-center justify-between">
+            <h2 class="text-[16px] font-semibold">Template gallery</h2>
+            <span class="text-[12px] font-medium uppercase tracking-wider text-text-muted">Reusable starting points</span>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div class="card rounded-lg p-4">
+              <div class="mb-2 flex items-start justify-between">
+                <div>
+                  <p class="text-[13px] font-semibold">Event-related analysis</p>
+                  <p class="mt-1 text-[13px] text-text-secondary">Epoch trials from STI markers, reject artifacts, average evoked responses.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-accent-muted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>Published</span>
+              </div>
+              <p class="text-[12px] text-text-muted">Inputs: FIF + events · Outputs: evoked + epochs</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="font-mono text-[12px] text-text-muted">Latest v1.2.0</span>
+                <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">Use template</button>
+              </div>
+            </div>
+            <div class="card rounded-lg p-4">
+              <div class="mb-2 flex items-start justify-between">
+                <div>
+                  <p class="text-[13px] font-semibold">Spectral analysis</p>
+                  <p class="mt-1 text-[13px] text-text-secondary">Multitaper PSD on epochs with configurable fmin/fmax and log output.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-accent-muted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>Published</span>
+              </div>
+              <p class="text-[12px] text-text-muted">Inputs: FIF or epochs · Outputs: spectra</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="font-mono text-[12px] text-text-muted">Latest v0.9.3</span>
+                <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">Use template</button>
+              </div>
+            </div>
+            <div class="card rounded-lg p-4">
+              <div class="mb-2 flex items-start justify-between">
+                <div>
+                  <p class="text-[13px] font-semibold">OPM preprocessing</p>
+                  <p class="mt-1 text-[13px] text-text-secondary">Reference subtraction, coregistration and downsampling for OPM-MEG.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-accent-muted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>Published</span>
+              </div>
+              <p class="text-[12px] text-text-muted">Inputs: OPM FIF · Outputs: cleaned continuous data</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="font-mono text-[12px] text-text-muted">Latest v0.4.0</span>
+                <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">Use template</button>
+              </div>
+            </div>
+            <div class="card rounded-lg p-4">
+              <div class="mb-2 flex items-start justify-between">
+                <div>
+                  <p class="text-[13px] font-semibold">Bad-channel detection</p>
+                  <p class="mt-1 text-[13px] text-text-secondary">Correlation- and variance-based channel QC that marks bad channels.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-accent-muted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>Published</span>
+              </div>
+              <p class="text-[12px] text-text-muted">Inputs: FIF · Outputs: bad channel list</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="font-mono text-[12px] text-text-muted">Latest v1.1.0</span>
+                <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">Use template</button>
+              </div>
+            </div>
+            <div class="card rounded-lg p-4">
+              <div class="mb-2 flex items-start justify-between">
+                <div>
+                  <p class="text-[13px] font-semibold">SSP artifact removal</p>
+                  <p class="mt-1 text-[13px] text-text-secondary">Signal-space projection for cardiac and blink artifacts.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-accent-muted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>Published</span>
+              </div>
+              <p class="text-[12px] text-text-muted">Inputs: FIF + ECG/EOG · Outputs: proj. corrected</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="font-mono text-[12px] text-text-muted">Latest v0.3.0</span>
+                <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">Use template</button>
+              </div>
+            </div>
+            <div class="card rounded-lg p-4">
+              <div class="mb-2 flex items-start justify-between">
+                <div>
+                  <p class="text-[13px] font-semibold">Custom pipeline</p>
+                  <p class="mt-1 text-[13px] text-text-secondary">Start from a parameterised MNE-Python template of your own.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-0.5 text-[12px] font-medium text-text-muted">Blank</span>
+              </div>
+              <p class="text-[12px] text-text-muted">Any inputs · define via UI or notebook</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="font-mono text-[12px] text-text-muted">—</span>
+                <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">Create</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card rounded-lg">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
+            <div>
+              <h2 class="text-[15px] font-semibold">Project pipelines</h2>
+              <p class="text-[13px] text-text-secondary">Pipelines defined in this project and their published versions.</p>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="table table-sm w-full">
+              <thead>
+                <tr class="bg-surface-muted/60">
+                  <th>Name</th>
+                  <th>Version</th>
+                  <th>Description</th>
+                  <th>Last run status</th>
+                  <th>Runs</th>
+                  <th>Updated</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-medium">event-related-analysis</td>
+                  <td class="font-mono text-[13px] text-text-secondary">v1.2.0</td>
+                  <td class="text-[13px] text-text-secondary">Epoch from STI markers; baseline-correct; average</td>
+                  <td><span class="inline-flex items-center gap-1.5 rounded-full bg-info-muted px-2.5 py-0.5 text-[12px] font-medium text-info"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>running</span></td>
+                  <td class="text-[13px] text-text-secondary">12</td>
+                  <td class="font-mono text-[13px] text-text-muted">2026-10-12 09:31</td>
+                  <td class="text-right"><a href="11-run-new.html" class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">Run now</a></td>
+                </tr>
+                <tr>
+                  <td class="font-medium">spectral-analysis</td>
+                  <td class="font-mono text-[13px] text-text-secondary">v0.9.3</td>
+                  <td class="text-[13px] text-text-secondary">Multitaper PSD; Welch fallback; fmin/fmax config</td>
+                  <td><span class="inline-flex items-center gap-1.5 rounded-full bg-success-muted px-2.5 py-0.5 text-[12px] font-medium text-success"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>succeeded</span></td>
+                  <td class="text-[13px] text-text-secondary">8</td>
+                  <td class="font-mono text-[13px] text-text-muted">2026-10-11 14:23</td>
+                  <td class="text-right"><button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">View versions</button></td>
+                </tr>
+                <tr>
+                  <td class="font-medium">opm-preprocess</td>
+                  <td class="font-mono text-[13px] text-text-secondary">v0.4.0</td>
+                  <td class="text-[13px] text-text-secondary">Reference subtraction + coregistration for OPM arrays</td>
+                  <td><span class="inline-flex items-center gap-1.5 rounded-full bg-success-muted px-2.5 py-0.5 text-[12px] font-medium text-success"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>succeeded</span></td>
+                  <td class="text-[13px] text-text-secondary">5</td>
+                  <td class="font-mono text-[13px] text-text-muted">2026-10-08 17:05</td>
+                  <td class="text-right"><button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">View versions</button></td>
+                </tr>
+                <tr>
+                  <td class="font-medium">bad-channel-detection</td>
+                  <td class="font-mono text-[13px] text-text-secondary">v1.1.0</td>
+                  <td class="text-[13px] text-text-secondary">Variance + correlation QC across channels</td>
+                  <td><span class="inline-flex items-center gap-1.5 rounded-full bg-danger-muted px-2.5 py-0.5 text-[12px] font-medium text-danger"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>failed</span></td>
+                  <td class="text-[13px] text-text-secondary">7</td>
+                  <td class="font-mono text-[13px] text-text-muted">2026-10-09 17:05</td>
+                  <td class="text-right"><button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">View versions</button></td>
+                </tr>
+                <tr>
+                  <td class="font-medium">ssp-artifact-removal</td>
+                  <td class="font-mono text-[13px] text-text-secondary">v0.3.0</td>
+                  <td class="text-[13px] text-text-secondary">SSP vectors for ECG and EOG with auto-correction</td>
+                  <td><span class="inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-0.5 text-[12px] font-medium text-text-secondary"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>cancelled</span></td>
+                  <td class="text-[13px] text-text-secondary">3</td>
+                  <td class="font-mono text-[13px] text-text-muted">2026-10-06 08:15</td>
+                  <td class="text-right"><button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface-muted px-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-raised">View versions</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
