@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MEG Lab — Sign in</title>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','sans-serif'], mono: ['ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','monospace'] },
+  colors: {
+    background:'#0B0F14', surface:'#121821', surfaceMuted:'#1A2230', surfaceRaised:'#212B3A',
+    border:'#263244', borderStrong:'#35455C', textPrimary:'#E6EDF5', textSecondary:'#9BA9BC', textMuted:'#6B7A90',
+    accent:'#4C8DFF', accentHover:'#6BA1FF', accentMuted:'#1C3355',
+    success:'#3FB950', successMuted:'#16301F', warning:'#D9A441', warningMuted:'#33290F',
+    danger:'#F0554D', dangerMuted:'#3A1C1A', info:'#58A6FF', infoMuted:'#16283F', neutralState:'#5B6578'
+  }
+} } };
+</script>
+<style>
+  :root{color-scheme:dark}
+  html,body{background:#0B0F14}
+  body{font-feature-settings:'cv02','cv03','cv04','cv11'}
+  .focus-ring:focus-visible{outline:2px solid #7FB2FF;outline-offset:2px;border-radius:6px}
+  .card{background:#121821;border:1px solid #263244}
+  .table :where(th,td){border-color:#263244}
+  .table th{color:#9BA9BC;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .menu li>a{color:#9BA9BC}
+  .menu li>a:hover{background:#1A2230;color:#E6EDF5}
+</style>
+</head>
+<body class="min-h-screen bg-background text-textPrimary antialiased font-sans text-[14px] leading-[22px]">
+
+  <header class="border-b border-border">
+    <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 md:px-6">
+      <a href="01-landing.html" class="focus-ring flex items-center gap-2.5">
+        <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+        <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+      </a>
+      <a href="01-landing.html" class="focus-ring inline-flex items-center gap-2 text-[13px] font-medium text-textSecondary hover:text-textPrimary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m15 18-6-6 6-6"/></svg>
+        Back to home
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto grid min-h-[calc(100vh-56px)] max-w-6xl items-center gap-12 px-4 py-12 md:px-6 lg:grid-cols-[1fr_460px]">
+    <section class="hidden lg:block">
+      <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-surfaceMuted px-3 py-1 text-[12px] font-medium text-textSecondary">
+        <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+        Private by default
+      </div>
+      <h1 class="max-w-lg text-[32px] font-bold leading-10 tracking-tight">Signals, sensors, and science — without the SNMP.</h1>
+      <p class="mt-4 max-w-md text-[14px] text-textSecondary">Sign in to open your projects, recordings, and experiment history. Your uploads stay private until you explicitly share them.</p>
+
+      <div class="mt-8 grid gap-3">
+        <div class="card flex items-start gap-3 rounded-lg p-4">
+          <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accentMuted text-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-4 w-4"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+          <div>
+            <div class="text-[14px] font-semibold">Signals first</div>
+            <p class="mt-0.5 text-[13px] text-textSecondary">Raw recordings, channels, events, and time-series visualisation are intuitive and responsive — the central workspace of the product.</p>
+          </div>
+        </div>
+        <div class="card flex items-start gap-3 rounded-lg p-4">
+          <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accentMuted text-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg></div>
+          <div>
+            <div class="text-[14px] font-semibold">One platform, two sensor technologies</div>
+            <p class="mt-0.5 text-[13px] text-textSecondary">Conventional SQUID-MEG and flexible, wearable OPM-MEG share the same project and experiment model, with technology-specific workflows where they are needed.</p>
+          </div>
+        </div>
+        <div class="card flex items-start gap-3 rounded-lg p-4">
+          <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accentMuted text-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg></div>
+          <div>
+            <div class="text-[14px] font-semibold">Start with the sample</div>
+            <p class="mt-0.5 text-[13px] text-textSecondary">Read-only exploration of the sample AEF recording is available without an account. Sign in only to save, analyse, or run.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto w-full max-w-[460px]">
+      <div class="card rounded-xl p-6 shadow-[0_16px_48px_rgba(0,0,0,0.55)]">
+        <h2 class="text-[22px] font-semibold leading-8 tracking-tight">Sign in</h2>
+        <p class="mt-1 text-[13px] text-textSecondary">Welcome back. Continue to your research workspace.</p>
+
+        <button type="button" class="focus-ring mt-6 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-border bg-surfaceMuted text-[13px] font-medium text-textPrimary hover:bg-surfaceRaised">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 3 4 7v6c0 4.4 3.4 7.4 8 8 4.6-.6 8-3.6 8-8V7Z"/><path d="M12 11v4"/><path d="M10 13h4"/></svg>
+          Continue with institution SSO
+        </button>
+
+        <div class="my-5 flex items-center gap-3 text-[12px] text-textMuted">
+          <span class="h-px flex-1 bg-border"></span>
+          or continue with email
+          <span class="h-px flex-1 bg-border"></span>
+        </div>
+
+        <form class="space-y-4" onsubmit="return false">
+          <div>
+            <label for="email" class="mb-1.5 block text-[13px] font-medium text-textSecondary">Email address</label>
+            <input id="email" type="email" autocomplete="email" class="focus-ring h-9 w-full rounded-md border border-border bg-surfaceMuted px-3 text-[13px] text-textPrimary placeholder:text-textMuted" placeholder="you@institution.edu" value="hieu.doan@university.edu" />
+          </div>
+          <div>
+            <div class="mb-1.5 flex items-center justify-between">
+              <label for="password" class="block text-[13px] font-medium text-textSecondary">Password</label>
+              <a href="#" class="focus-ring text-[12px] font-medium text-accent hover:text-accentHover">Forgot password?</a>
+            </div>
+            <div class="relative">
+              <input id="password" type="password" autocomplete="current-password" class="focus-ring h-9 w-full rounded-md border border-border bg-surfaceMuted px-3 pr-10 text-[13px] text-textPrimary placeholder:text-textMuted" placeholder="••••••••••••" value="correct-horse-battery" />
+              <button type="button" aria-label="Show password" class="focus-ring absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-md text-textMuted hover:text-textPrimary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <label class="flex items-center gap-2 text-[13px] text-textSecondary">
+            <input type="checkbox" checked class="h-4 w-4 rounded border-border bg-surfaceMuted accent-accent" />
+            Remember me on this device
+          </label>
+          <button type="submit" class="focus-ring inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-accent text-[13px] font-semibold text-background hover:bg-accentHover">Sign in</button>
+        </form>
+
+        <p class="mt-5 text-center text-[13px] text-textSecondary">
+          New to MEG Lab?
+          <a href="#" class="focus-ring font-medium text-accent hover:text-accentHover">Create an account</a>
+        </p>
+      </div>
+
+      <div class="mt-4 rounded-lg border border-border bg-surfaceMuted p-3 text-[12px] leading-5 text-textMuted">
+        <span class="font-medium text-textSecondary">Private by default.</span> Recordings, sensor geometry, and derived files are visible only to you and the members you add. Public samples are shared explicitly, with visible licence and citation.
+      </div>
+
+      <p class="mt-6 text-center text-[12px] text-textMuted">
+        By signing in you agree to the <a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Terms of use</a> and <a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Privacy policy</a>.
+      </p>
+    </section>
+  </main>
+
+</body>
+</html>
