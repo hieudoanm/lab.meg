@@ -1,0 +1,322 @@
+erDiagram
+
+    users {
+        PK UUID id
+        TEXT email
+        TEXT display_name
+        TIMESTAMPTZ created_at
+    }
+
+    projects {
+        PK UUID id
+        UUID owner_id
+        TEXT name
+        TEXT description
+        VISIBILITY visibility
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ archived_at
+        CREATED_AT) (owner_id,
+        CREATED_AT) (visibility,
+    }
+
+    project_members {
+        UUID project_id
+        UUID user_id
+        PROJECT_ROLE role
+        TIMESTAMPTZ created_at
+        UK USER_ID) (project_id,
+    }
+
+    datasets {
+        PK UUID id
+        UUID project_id
+        TEXT name
+        DATASET_SOURCE_TYPE source_type
+        DATASET_STATUS status
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ archived_at
+        CREATED_AT) (project_id,
+        UK ID) (project_id,
+    }
+
+    dataset_versions {
+        PK UUID id
+        UUID dataset_id
+        TEXT version
+        JSONB manifest
+        DATASET_STATUS status
+        TEXT checksum
+        TIMESTAMPTZ created_at
+        UK VERSION) (dataset_id,
+        CREATED_AT) (dataset_id,
+        UK ID) (dataset_id,
+    }
+
+    recordings {
+        PK UUID id
+        UUID dataset_version_id
+        TEXT name
+        RECORDING_FORMAT format
+        ACQUISITION_SYSTEM acquisition_system
+        TEXT device_serial
+        TEXT manufacturer
+        DOUBLE PRECISION duration_s
+        DOUBLE PRECISION sampling_frequency_hz
+        INTEGER n_channels
+        BOOLEAN maxfilter_sss_applied
+        COORDINATE_FRAME coordinate_frame
+        TIMESTAMPTZ created_at
+        CREATED_AT) (dataset_version_id,
+        UK ID) (dataset_version_id,
+    }
+
+    file_assets {
+        PK UUID id
+        UUID recording_id
+        TEXT object_key
+        TEXT checksum
+        BIGINT size_bytes
+        TEXT media_type
+        TEXT role
+        TIMESTAMPTZ created_at
+        ROLE) (recording_id,
+    }
+
+    channels {
+        PK UUID id
+        UUID recording_id
+        TEXT name
+        TEXT group_name
+        CHANNEL_TYPE type
+        UNIT unit
+        DOUBLE PRECISION unit_mul
+        CHANNEL_STATUS status
+        TEXT coil_type
+        DOUBLE PRECISION position_x_mm
+        DOUBLE PRECISION position_y_mm
+        DOUBLE PRECISION position_z_mm
+        DOUBLE PRECISION orientation_x
+        DOUBLE PRECISION orientation_y
+        DOUBLE PRECISION orientation_z
+        BOOLEAN opm_scalar
+        BOOLEAN opm_vector
+        TIMESTAMPTZ created_at
+        UK NAME) (recording_id,
+        TYPE) (recording_id,
+        STATUS) (recording_id,
+    }
+
+    sensor_configurations {
+        PK UUID id
+        UUID recording_id
+        SENSOR_TYPE sensor_type
+        COORDINATE_FRAME coordinate_frame
+        JSONB positions_json
+        JSONB orientations_json
+        JSONB calibrations_json
+        TEXT movement_ref
+        BOOLEAN time_varying
+        TIMESTAMPTZ created_at
+    }
+
+    event_sets {
+        PK UUID id
+        UUID recording_id
+        TEXT name
+        TEXT source
+        TEXT sample_convention
+        INTEGER event_count
+        TEXT description
+        JSONB metadata
+        TIMESTAMPTZ created_at
+        CREATED_AT) (recording_id,
+        SOURCE) (recording_id,
+    }
+
+    pipelines {
+        PK UUID id
+        UUID project_id
+        TEXT name
+        TEXT description
+        PIPELINE_STATUS status
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        CREATED_AT) (project_id,
+        UK ID) (project_id,
+    }
+
+    pipeline_versions {
+        PK UUID id
+        UUID pipeline_id
+        TEXT version
+        JSONB definition
+        TEXT image_digest
+        JSONB parameters_schema
+        PIPELINE_STATUS status
+        TIMESTAMPTZ created_at
+        UK VERSION) (pipeline_id,
+        CREATED_AT) (pipeline_id,
+    }
+
+    experiment_runs {
+        PK TEXT id
+        UUID project_id
+        UUID pipeline_version_id
+        UUID dataset_version_id
+        UUID sensor_configuration_id
+        UUID initiated_by
+        RUN_STATUS status
+        JSONB parameters
+        TEXT idempotency_key
+        TEXT error_classification
+        DOUBLE PRECISION cpu_limit_cores
+        BIGINT memory_limit_bytes
+        BIGINT disk_limit_bytes
+        INTEGER wall_clock_limit_s
+        TIMESTAMPTZ started_at
+        TIMESTAMPTZ finished_at
+        TIMESTAMPTZ created_at
+        CREATED_AT) (status,
+        CREATED_AT) (dataset_version_id,
+        CREATED_AT) (pipeline_version_id,
+        CREATED_AT) (project_id,
+    }
+
+    artifacts {
+        PK UUID id
+        TEXT run_id
+        TEXT object_key
+        TEXT checksum
+        BIGINT size_bytes
+        TEXT media_type
+        ARTIFACT_KIND kind
+        JSONB metadata
+        TIMESTAMPTZ created_at
+        KIND) (run_id,
+    }
+
+    usage_records {
+        PK UUID id
+        UUID user_id
+        TEXT run_id
+        RESOURCE_TYPE resource_type
+        BIGINT quantity
+        TIMESTAMPTZ created_at
+        CREATED_AT) (user_id,
+        CREATED_AT) (resource_type,
+    }
+
+    audit_events {
+        PK UUID id
+        UUID actor_id
+        TEXT action
+        TEXT resource_type
+        TEXT resource_id
+        TIMESTAMPTZ created_at
+        RESOURCE_ID, (resource_type,
+        CREATED_AT) (actor_id,
+    }
+
+    outbox_events {
+        PK UUID id
+        TEXT topic
+        JSONB payload
+        OUTBOX_STATUS status
+        INTEGER attempts
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ published_at
+        CREATED_AT) (status,
+        CREATED_AT) (topic,
+    }
+
+    auth_credentials {
+        PK UUID user_id
+        TEXT email
+        TEXT password_hash
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    sessions {
+        PK UUID id
+        UUID user_id
+        TEXT token_hash
+        TEXT user_agent
+        TEXT ip_address
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ revoked_at
+    }
+
+    password_reset_tokens {
+        PK TEXT token_hash
+        UUID user_id
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ used_at
+        TIMESTAMPTZ created_at
+    }
+
+    upload_sessions {
+        PK UUID id
+        UUID dataset_id
+        UUID project_id
+        TEXT status
+        BIGINT expected_size_bytes
+        TEXT checksum_sha256
+        TEXT declared_format
+        TEXT acquisition_system
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ completed_at
+    }
+
+    upload_targets {
+        PK UUID id
+        UUID upload_session_id
+        TEXT name
+        TEXT object_key
+        BIGINT size_bytes
+        TEXT checksum_sha256
+        TEXT media_type
+        TEXT role
+        TIMESTAMPTZ uploaded_at
+        TIMESTAMPTZ created_at
+        UK OBJECT_KEY) (upload_session_id,
+    }
+
+    run_logs {
+        TEXT run_id
+        BIGINT sequence
+        TIMESTAMPTZ timestamp
+        TEXT level
+        TEXT source
+        TEXT message
+        PK SEQUENCE) (run_id,
+    }
+
+    shares {
+        PK UUID id
+        UUID project_id
+        UUID resource_id
+        TEXT scope
+        TEXT role
+        TEXT token_hash
+        UUID created_by
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ revoked_at
+        TIMESTAMPTZ created_at
+    }
+
+    idempotency_keys {
+        TEXT key
+        UUID user_id
+        TEXT request_hash
+        INTEGER response_status
+        JSONB response_body
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ expires_at
+        PK USER_ID) (key,
+    }
+

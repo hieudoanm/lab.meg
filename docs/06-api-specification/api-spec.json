@@ -1,0 +1,4040 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MEG Lab API",
+    "description": "REST API for MEG Lab - project-scoped magnetoencephalography data management, sensor geometry, pipelines, and reproducible experiment runs.",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth"
+    },
+    {
+      "name": "projects"
+    },
+    {
+      "name": "datasets"
+    },
+    {
+      "name": "recordings"
+    },
+    {
+      "name": "signals"
+    },
+    {
+      "name": "sensors"
+    },
+    {
+      "name": "pipelines"
+    },
+    {
+      "name": "runs"
+    },
+    {
+      "name": "artifacts"
+    },
+    {
+      "name": "shares"
+    },
+    {
+      "name": "usage"
+    },
+    {
+      "name": "health"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    },
+    {
+      "cookieAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "meg-lab_session"
+      }
+    },
+    "parameters": {
+      "projectId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Project identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "datasetId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Dataset identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "recordingId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Recording identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "pipelineId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Pipeline identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "runId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Experiment run identifier, e.g. run_9f3c1b7a.",
+        "schema": {
+          "type": "string",
+          "pattern": "^run_[0-9a-f]{8}$",
+          "example": "run_9f3c1b7a"
+        }
+      },
+      "shareId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Sharing link identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "idempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "description": "Client-generated key used to deduplicate state-changing requests such as run submission and upload finalisation.",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 128
+        }
+      },
+      "cursor": {
+        "name": "cursor",
+        "in": "query",
+        "required": false,
+        "description": "Opaque pagination cursor returned as next_cursor by a previous response.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "description": "Maximum number of items to return.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        }
+      },
+      "channelType": {
+        "name": "type",
+        "in": "query",
+        "required": false,
+        "description": "Restrict channel results to one or more channel types.",
+        "explode": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/channel_type"
+          }
+        }
+      },
+      "channelStatus": {
+        "name": "status",
+        "in": "query",
+        "required": false,
+        "description": "Restrict channel results by channel quality status.",
+        "schema": {
+          "$ref": "#/components/schemas/channel_status"
+        }
+      },
+      "channelIds": {
+        "name": "channel_ids",
+        "in": "query",
+        "required": false,
+        "description": "Comma-separated channel names to include, e.g. \"MEG 0422,MEG 0112\". Mutually compatible with type and status filters.",
+        "style": "form",
+        "explode": false,
+        "schema": {
+          "type": "array",
+          "maxItems": 512,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "eventSource": {
+        "name": "source",
+        "in": "query",
+        "required": false,
+        "description": "Restrict event sets by provenance source.",
+        "schema": {
+          "$ref": "#/components/schemas/event_source"
+        }
+      },
+      "artifactKind": {
+        "name": "kind",
+        "in": "query",
+        "required": false,
+        "description": "Restrict artifacts by kind.",
+        "schema": {
+          "$ref": "#/components/schemas/artifact_kind"
+        }
+      },
+      "logLevel": {
+        "name": "level",
+        "in": "query",
+        "required": false,
+        "description": "Minimum severity to include.",
+        "schema": {
+          "$ref": "#/components/schemas/log_level"
+        }
+      },
+      "tminS": {
+        "name": "tmin_s",
+        "in": "query",
+        "required": true,
+        "description": "Inclusive start of the requested window in seconds relative to the recording time base.",
+        "schema": {
+          "type": "number",
+          "format": "float",
+          "example": 1.5
+        }
+      },
+      "tmaxS": {
+        "name": "tmax_s",
+        "in": "query",
+        "required": true,
+        "description": "Exclusive end of the requested window in seconds relative to the recording time base. Must be greater than tmin_s.",
+        "schema": {
+          "type": "number",
+          "format": "float",
+          "example": 2.5
+        }
+      },
+      "resolution": {
+        "name": "resolution",
+        "in": "query",
+        "required": false,
+        "description": "Requested output resolution. \"full\" returns native samples; reduced levels decimate; \"summary\" returns a precomputed multiresolution peak/decimated representation.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "full",
+            "high",
+            "medium",
+            "low",
+            "summary"
+          ],
+          "default": "medium",
+          "example": "medium"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Malformed request or invalid parameter combination.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid authentication.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Authenticated caller is not permitted to perform the operation.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The requested resource does not exist or is not visible to the caller.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "The request conflicts with the current resource state.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "PayloadTooLarge": {
+        "description": "The declared or uploaded payload exceeds configured limits.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "UnprocessableEntity": {
+        "description": "The request is well formed but cannot be processed, for example an unsupported recording file set.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Rate or concurrency limit exceeded.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Unexpected server error.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "trace_id"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable machine-readable error code, e.g. dataset_not_ready.",
+            "example": "dataset_not_ready"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable summary safe to display to the caller.",
+            "example": "Dataset version is not ready for analysis."
+          },
+          "details": {
+            "type": "array",
+            "description": "Optional structured field-level or item-level details.",
+            "items": {
+              "type": "object"
+            }
+          },
+          "trace_id": {
+            "type": "string",
+            "description": "Correlation identifier that links this response to server logs.",
+            "example": "trace_4f2a9c01"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Error"
+          }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProjectList": {
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Project"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DatasetList": {
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "required": [
+          "id",
+          "owner_id",
+          "name",
+          "visibility",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Auditory Evoked Fields"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/visibility"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "archived_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "ProjectCreate": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Auditory Evoked Fields"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/visibility"
+          }
+        }
+      },
+      "ProjectMember": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "user_id",
+          "role",
+          "created_at"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "$ref": "#/components/schemas/project_role"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Dataset": {
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "name",
+          "source_type",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "AEF-001"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "upload",
+              "import",
+              "sample"
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/dataset_status"
+          },
+          "latest_version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Most recent dataset version label, e.g. \"v3\".",
+            "example": "v3"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "archived_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "DatasetCreate": {
+        "type": "object",
+        "required": [
+          "name",
+          "source_type",
+          "recording_format",
+          "files"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "AEF-001"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "upload",
+              "import",
+              "sample"
+            ],
+            "example": "upload"
+          },
+          "recording_format": {
+            "$ref": "#/components/schemas/recording_format"
+          },
+          "acquisition_system": {
+            "$ref": "#/components/schemas/acquisition_system"
+          },
+          "files": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Declared file set for the recording. A directory-based format such as CTF .ds is only complete when every required companion file is declared.",
+            "items": {
+              "$ref": "#/components/schemas/FileDeclaration"
+            }
+          }
+        }
+      },
+      "FileDeclaration": {
+        "type": "object",
+        "required": [
+          "name",
+          "size_bytes",
+          "role"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "AEF-001_meg.fif"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 195465216
+          },
+          "checksum_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "example": "sha256:1f9ba3c7a41d0e8c25b6a7f0d4e12ab93c8f5e6d2aa7b8c9d0e1f2a3b4c5d6e7"
+          },
+          "media_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "application/octet-stream"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "recording",
+              "events",
+              "channels",
+              "coordsystem",
+              "calibration",
+              "crosstalk",
+              "header",
+              "companion",
+              "metadata"
+            ],
+            "example": "recording"
+          }
+        }
+      },
+      "DatasetVersion": {
+        "type": "object",
+        "required": [
+          "id",
+          "dataset_id",
+          "version",
+          "status",
+          "manifest",
+          "checksum",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dataset_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "string",
+            "description": "Monotonic version label, e.g. \"v3\".",
+            "example": "v3"
+          },
+          "status": {
+            "$ref": "#/components/schemas/dataset_status"
+          },
+          "manifest": {
+            "type": "object",
+            "description": "Validated snapshot manifest covering file set, channel inventory, sensor configuration, and time-base conventions."
+          },
+          "checksum": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "example": "sha256:1f9ba3c7a41d0e8c25b6a7f0d4e12ab93c8f5e6d2aa7b8c9d0e1f2a3b4c5d6e7"
+          },
+          "recording_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DatasetCompleteRequest": {
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Final declared objects. The server verifies that every object exists, matches its declared size, and matches its checksum before validating.",
+            "items": {
+              "$ref": "#/components/schemas/FileDeclaration"
+            }
+          }
+        }
+      },
+      "UploadSession": {
+        "type": "object",
+        "required": [
+          "id",
+          "dataset_id",
+          "project_id",
+          "status",
+          "files",
+          "expires_at",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dataset_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed",
+              "expired",
+              "aborted"
+            ]
+          },
+          "expected_size_bytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "checksum_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadTarget"
+            }
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UploadTarget": {
+        "type": "object",
+        "required": [
+          "name",
+          "object_key",
+          "upload_url",
+          "method"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "AEF-001_meg.fif"
+          },
+          "object_key": {
+            "type": "string",
+            "description": "Server-generated private object key. Possession of the key is never authorisation.",
+            "example": "projects/8c1d/datasets/aef001/v3/AEF-001_meg.fif"
+          },
+          "upload_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Short-lived, single-object signed URL for direct-to-storage transfer."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "PUT",
+              "POST"
+            ]
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Recording": {
+        "type": "object",
+        "required": [
+          "id",
+          "dataset_version_id",
+          "name",
+          "format",
+          "acquisition_system",
+          "duration_s",
+          "sampling_frequency_hz",
+          "n_channels",
+          "coordinate_frame",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d"
+          },
+          "dataset_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "AEF-001"
+          },
+          "format": {
+            "$ref": "#/components/schemas/recording_format"
+          },
+          "acquisition_system": {
+            "$ref": "#/components/schemas/acquisition_system"
+          },
+          "device_serial": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Vectorview-204"
+          },
+          "manufacturer": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Elekta Neuromag"
+          },
+          "duration_s": {
+            "type": "number",
+            "format": "float",
+            "example": 240.0
+          },
+          "sampling_frequency_hz": {
+            "type": "number",
+            "format": "float",
+            "example": 1000.0
+          },
+          "n_channels": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 315
+          },
+          "maxfilter_sss_applied": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Null when the acquisition does not report SSS/MaxFilter history."
+          },
+          "head_position_indicator": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "coordinate_frame": {
+            "$ref": "#/components/schemas/coordinate_frame"
+          },
+          "bad_channel_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "MEG 0131",
+              "MEG 2142"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Channel": {
+        "type": "object",
+        "required": [
+          "id",
+          "recording_id",
+          "name",
+          "type",
+          "unit",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recording_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "MEG 0422"
+          },
+          "group_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "MEG planar gradiometers"
+          },
+          "type": {
+            "$ref": "#/components/schemas/channel_type"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/unit"
+          },
+          "unit_mul": {
+            "type": "number",
+            "format": "float",
+            "description": "Multiplier applied to the stored sample values to obtain the declared unit.",
+            "example": 1.0
+          },
+          "status": {
+            "$ref": "#/components/schemas/channel_status"
+          },
+          "coil_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "planar"
+          },
+          "position_mm": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Sensor position in millimetres expressed in the recording coordinate frame.",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "minItems": 3,
+            "maxItems": 3,
+            "example": [
+              0.0,
+              31.7,
+              62.4
+            ]
+          },
+          "orientation": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Sensor orientation unit vector expressed in the recording coordinate frame.",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "opm_scalar": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "opm_vector": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        }
+      },
+      "ChannelList": {
+        "type": "object",
+        "required": [
+          "recording_id",
+          "items",
+          "total",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "recording_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Channel"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 315
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "required": [
+          "sample",
+          "time_s"
+        ],
+        "properties": {
+          "sample": {
+            "type": "integer",
+            "description": "Sample index interpreted using the event set sample convention.",
+            "example": 1602
+          },
+          "time_s": {
+            "type": "number",
+            "format": "float",
+            "example": 1.602
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "STI 014"
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "example": 14
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "auditory tone onset"
+          }
+        }
+      },
+      "EventSet": {
+        "type": "object",
+        "required": [
+          "id",
+          "recording_id",
+          "name",
+          "source",
+          "sample_convention",
+          "event_count",
+          "metadata",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recording_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "auditory stimuli"
+          },
+          "source": {
+            "$ref": "#/components/schemas/event_source"
+          },
+          "sample_convention": {
+            "$ref": "#/components/schemas/sample_convention"
+          },
+          "event_count": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 14
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "description": "Optional inline event list. Present when a single event set is requested.",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "example": {
+              "channel": "STI 014",
+              "tmin_s": 0.0
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EventSetList": {
+        "type": "object",
+        "required": [
+          "recording_id",
+          "items",
+          "total",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "recording_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventSet"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SignalWindow": {
+        "type": "object",
+        "required": [
+          "recording_id",
+          "tmin_s",
+          "tmax_s",
+          "sampling_frequency_hz",
+          "effective_sampling_frequency_hz",
+          "resolution",
+          "channel_names",
+          "times_s",
+          "data"
+        ],
+        "properties": {
+          "recording_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tmin_s": {
+            "type": "number",
+            "format": "float"
+          },
+          "tmax_s": {
+            "type": "number",
+            "format": "float"
+          },
+          "sampling_frequency_hz": {
+            "type": "number",
+            "format": "float",
+            "description": "Native sampling frequency of the recording.",
+            "example": 1000.0
+          },
+          "effective_sampling_frequency_hz": {
+            "type": "number",
+            "format": "float",
+            "description": "Sampling frequency after any requested decimation or summary reduction.",
+            "example": 250.0
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "full",
+              "high",
+              "medium",
+              "low",
+              "summary"
+            ]
+          },
+          "decimation": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 4
+          },
+          "channel_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "MEG 0422",
+              "MEG 0112",
+              "MEG 0131"
+            ]
+          },
+          "unit": {
+            "$ref": "#/components/schemas/unit"
+          },
+          "times_s": {
+            "type": "array",
+            "description": "Sample times in seconds on the shared recording time base.",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "data": {
+            "type": "array",
+            "description": "Row-major signal matrix aligned with channel_names and times_s. Bounded to a documented maximum number of samples.",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              }
+            }
+          },
+          "truncated": {
+            "type": "boolean",
+            "description": "True when the requested window exceeded the bounded response limit and was decimated or clipped.",
+            "example": false
+          },
+          "max_samples": {
+            "type": "integer",
+            "description": "Server-enforced maximum number of samples per channel in a single response.",
+            "example": 200000
+          }
+        }
+      },
+      "SensorConfiguration": {
+        "type": "object",
+        "required": [
+          "id",
+          "recording_id",
+          "sensor_type",
+          "coordinate_frame",
+          "length_unit",
+          "sensors",
+          "time_varying",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recording_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sensor_type": {
+            "$ref": "#/components/schemas/sensor_type"
+          },
+          "coordinate_frame": {
+            "$ref": "#/components/schemas/coordinate_frame"
+          },
+          "length_unit": {
+            "type": "string",
+            "enum": [
+              "mm",
+              "m"
+            ],
+            "example": "mm"
+          },
+          "positions_json": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "orientations_json": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "calibrations_json": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "movement_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reference to movement-tracking data when time-varying geometry is available."
+          },
+          "time_varying": {
+            "type": "boolean",
+            "description": "True when sensor geometry may vary over the recording and movement tracking exists.",
+            "example": false
+          },
+          "sensors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sensor"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Sensor": {
+        "type": "object",
+        "required": [
+          "name",
+          "type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "MEG 0422"
+          },
+          "type": {
+            "$ref": "#/components/schemas/sensor_type"
+          },
+          "channel_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "MEG 0421",
+              "MEG 0422",
+              "MEG 0423"
+            ]
+          },
+          "position_mm": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "minItems": 3,
+            "maxItems": 3,
+            "example": [
+              0.0,
+              31.7,
+              62.4
+            ]
+          },
+          "orientation": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "calibration": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 1.0
+          }
+        }
+      },
+      "Pipeline": {
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "name",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "event-related-analysis"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/pipeline_status"
+          },
+          "latest_version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "1.2.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PipelineCreate": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "name"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "event-related-analysis"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "PipelineVersion": {
+        "type": "object",
+        "required": [
+          "id",
+          "pipeline_id",
+          "version",
+          "definition",
+          "image_digest",
+          "parameters_schema",
+          "status",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pipeline_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "string",
+            "description": "Semantic version label, e.g. 1.2.0.",
+            "example": "1.2.0"
+          },
+          "definition": {
+            "type": "object",
+            "description": "Validated workflow definition consumed by the versioned container."
+          },
+          "image_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "description": "Immutable OCI image digest; never a mutable tag.",
+            "example": "sha256:9f3c1b7a41d0e8c25b6a7f0d4e12ab93c8f5e6d2aa7b8c9d0e1f2a3b4c5d6e7"
+          },
+          "parameters_schema": {
+            "type": "object",
+            "description": "JSON Schema used to validate run parameters against this version."
+          },
+          "status": {
+            "$ref": "#/components/schemas/pipeline_status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PipelineVersionCreate": {
+        "type": "object",
+        "required": [
+          "version",
+          "definition",
+          "image_digest"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "example": "1.2.0"
+          },
+          "definition": {
+            "type": "object"
+          },
+          "image_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "parameters_schema": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/pipeline_status"
+          }
+        }
+      },
+      "ResourceLimits": {
+        "type": "object",
+        "description": "Requested and captured resource limits for the run.",
+        "properties": {
+          "cpu_cores": {
+            "type": "number",
+            "format": "float",
+            "example": 4.0
+          },
+          "memory_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 8589934592
+          },
+          "disk_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 21474836480
+          },
+          "wall_clock_limit_s": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 3600
+          }
+        }
+      },
+      "RunCreate": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "pipeline_version_id",
+          "dataset_version_id",
+          "parameters"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pipeline_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dataset_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Validated against the pipeline version parameter schema.",
+            "example": {
+              "filter": {
+                "l_freq_hz": 1.0,
+                "h_freq_hz": 40.0
+              },
+              "epoch": {
+                "tmin_s": -0.2,
+                "tmax_s": 0.8,
+                "baseline_s": [
+                  -0.2,
+                  0.0
+                ]
+              }
+            }
+          },
+          "sensor_configuration_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "resource_limits": {
+            "$ref": "#/components/schemas/ResourceLimits"
+          }
+        }
+      },
+      "Run": {
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "pipeline_version_id",
+          "dataset_version_id",
+          "status",
+          "parameters",
+          "initiated_by",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^run_[0-9a-f]{8}$",
+            "example": "run_9f3c1b7a"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pipeline_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dataset_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sensor_configuration_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/run_status"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "idempotency_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "error_classification": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sanitised failure classification, e.g. invalid_input, unsupported_format, transient_infra."
+          },
+          "resource_limits": {
+            "$ref": "#/components/schemas/ResourceLimits"
+          },
+          "manifest": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExperimentManifest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "initiated_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "started_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "finished_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RunStatus": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "pipeline_version_id",
+          "dataset_version_id",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^run_[0-9a-f]{8}$",
+            "example": "run_9f3c1b7a"
+          },
+          "status": {
+            "$ref": "#/components/schemas/run_status"
+          },
+          "pipeline_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dataset_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "progress_percent": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "float",
+            "minimum": 0,
+            "maximum": 100,
+            "example": 100
+          },
+          "error_classification": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "started_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "finished_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RunList": {
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunStatus"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LogLine": {
+        "type": "object",
+        "required": [
+          "timestamp",
+          "level",
+          "message"
+        ],
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-05-14T14:23:01Z"
+          },
+          "level": {
+            "$ref": "#/components/schemas/log_level"
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "init"
+          },
+          "message": {
+            "type": "string",
+            "example": "[init] loading dataset AEF-001 v3 (SHA-256: 1f9ba3c7...)"
+          }
+        }
+      },
+      "LogList": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "items",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "pattern": "^run_[0-9a-f]{8}$"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogLine"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Artifact": {
+        "type": "object",
+        "required": [
+          "id",
+          "run_id",
+          "object_key",
+          "checksum",
+          "size_bytes",
+          "media_type",
+          "kind",
+          "metadata",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "run_id": {
+            "type": "string",
+            "pattern": "^run_[0-9a-f]{8}$"
+          },
+          "object_key": {
+            "type": "string"
+          },
+          "checksum": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "media_type": {
+            "type": "string",
+            "example": "application/octet-stream"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/artifact_kind"
+          },
+          "download_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "description": "Short-lived signed URL issued only after an authorisation check."
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ArtifactList": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "items",
+          "next_cursor",
+          "has_more"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "pattern": "^run_[0-9a-f]{8}$"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Artifact"
+            }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Share": {
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "scope",
+          "role",
+          "token",
+          "created_by",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/share_scope"
+          },
+          "resource_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Target resource identifier for dataset- or run-scoped shares. Null for project-scoped shares."
+          },
+          "role": {
+            "$ref": "#/components/schemas/project_role"
+          },
+          "token": {
+            "type": "string",
+            "description": "Opaque sharing token. Possession of the token is not authorisation beyond the declared scope and expiry."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ShareCreate": {
+        "type": "object",
+        "required": [
+          "scope",
+          "role"
+        ],
+        "properties": {
+          "scope": {
+            "$ref": "#/components/schemas/share_scope"
+          },
+          "resource_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "role": {
+            "$ref": "#/components/schemas/project_role",
+            "example": "viewer"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "ExperimentManifest": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "run_id",
+          "inputs",
+          "pipeline",
+          "parameters",
+          "environment",
+          "outputs",
+          "status"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "run_id": {
+            "type": "string",
+            "pattern": "^run_[0-9a-f]{8}$",
+            "example": "run_9f3c1b7a"
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "dataset_version_id",
+                "checksum"
+              ],
+              "properties": {
+                "dataset_version_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "checksum": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          },
+          "pipeline": {
+            "type": "object",
+            "required": [
+              "name",
+              "version",
+              "image_digest"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "event-related-analysis"
+              },
+              "version": {
+                "type": "string",
+                "example": "1.2.0"
+              },
+              "image_digest": {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              }
+            }
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "environment": {
+            "type": "object",
+            "properties": {
+              "python_version": {
+                "type": "string"
+              },
+              "mne_version": {
+                "type": "string"
+              }
+            }
+          },
+          "sensor_configuration_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/run_status"
+          }
+        }
+      },
+      "HealthLive": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          }
+        }
+      },
+      "HealthReady": {
+        "type": "object",
+        "required": [
+          "status",
+          "dependencies"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded",
+              "not_ready"
+            ]
+          },
+          "dependencies": {
+            "type": "object"
+          }
+        }
+      },
+      "SignedUrlResponse": {
+        "type": "object",
+        "required": [
+          "url",
+          "expires_at"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "visibility": {
+        "type": "string",
+        "description": "Project visibility.",
+        "enum": [
+          "private",
+          "public",
+          "link"
+        ]
+      },
+      "project_role": {
+        "type": "string",
+        "description": "Membership role within a project.",
+        "enum": [
+          "owner",
+          "editor",
+          "viewer"
+        ]
+      },
+      "dataset_status": {
+        "type": "string",
+        "description": "Lifecycle state of a dataset or dataset version.",
+        "enum": [
+          "uploading",
+          "validating",
+          "ready",
+          "failed"
+        ]
+      },
+      "recording_format": {
+        "type": "string",
+        "description": "Supported MEG recording container format.",
+        "enum": [
+          "fif",
+          "ctf",
+          "kit",
+          "bin",
+          "bids"
+        ]
+      },
+      "acquisition_system": {
+        "type": "string",
+        "description": "Acquisition system class.",
+        "enum": [
+          "squid",
+          "opm"
+        ]
+      },
+      "channel_type": {
+        "type": "string",
+        "description": "Physical or logical channel type.",
+        "enum": [
+          "mag",
+          "grad",
+          "eeg",
+          "eog",
+          "ecg",
+          "stim",
+          "misc",
+          "opm"
+        ]
+      },
+      "channel_status": {
+        "type": "string",
+        "description": "Channel quality status recorded by the acquisition system or an operator.",
+        "enum": [
+          "good",
+          "bad"
+        ]
+      },
+      "unit": {
+        "type": "string",
+        "description": "Physical unit of stored sample values after applying unit_mul.",
+        "enum": [
+          "tesla",
+          "tesla_per_metre",
+          "volt",
+          "amperes",
+          "dimensionless",
+          "other"
+        ]
+      },
+      "coordinate_frame": {
+        "type": "string",
+        "description": "Coordinate frame in which sensor geometry is expressed.",
+        "enum": [
+          "head",
+          "device",
+          "opm"
+        ]
+      },
+      "sensor_type": {
+        "type": "string",
+        "description": "Sensor technology classification.",
+        "enum": [
+          "magnetometer",
+          "gradiometer",
+          "opm_scalar",
+          "opm_vector",
+          "aux"
+        ]
+      },
+      "pipeline_status": {
+        "type": "string",
+        "description": "Lifecycle state of a pipeline or pipeline version.",
+        "enum": [
+          "draft",
+          "published",
+          "archived"
+        ]
+      },
+      "run_status": {
+        "type": "string",
+        "description": "Lifecycle state of an experiment run.",
+        "enum": [
+          "queued",
+          "running",
+          "succeeded",
+          "failed",
+          "cancelled"
+        ]
+      },
+      "resource_type": {
+        "type": "string",
+        "description": "Metered resource category.",
+        "enum": [
+          "core_hours",
+          "storage_bytes"
+        ]
+      },
+      "artifact_kind": {
+        "type": "string",
+        "description": "Classification of a produced artifact.",
+        "enum": [
+          "original",
+          "derived",
+          "report",
+          "manifest"
+        ]
+      },
+      "event_source": {
+        "type": "string",
+        "description": "Provenance of an event set.",
+        "enum": [
+          "acquisition",
+          "annotation",
+          "derived"
+        ]
+      },
+      "sample_convention": {
+        "type": "string",
+        "description": "Convention used to interpret event sample indices against the recording time base.",
+        "enum": [
+          "onset",
+          "first_sample",
+          "mid_sample",
+          "trigger"
+        ]
+      },
+      "share_scope": {
+        "type": "string",
+        "description": "Resource scope covered by a sharing link.",
+        "enum": [
+          "project",
+          "dataset",
+          "run"
+        ]
+      },
+      "log_level": {
+        "type": "string",
+        "description": "Log severity level.",
+        "enum": [
+          "debug",
+          "info",
+          "warn",
+          "error"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/projects": {
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "List accessible projects",
+        "description": "Returns projects the authenticated user can access, ordered by created_at descending.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of accessible projects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectList"
+                },
+                "example": {
+                  "items": [
+                    {
+                      "id": "8c1d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+                      "owner_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+                      "name": "Auditory Evoked Fields",
+                      "description": "SQUID-MEG auditory paradigm",
+                      "visibility": "private",
+                      "created_at": "2026-05-01T09:12:00Z",
+                      "updated_at": "2026-05-10T11:30:00Z",
+                      "archived_at": null
+                    }
+                  ],
+                  "next_cursor": null,
+                  "has_more": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Create a project",
+        "description": "Creates a new project owned by the authenticated user. The owner is also recorded as an owner row in project membership.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              },
+              "example": {
+                "name": "Auditory Evoked Fields",
+                "description": "SQUID-MEG auditory paradigm",
+                "visibility": "private"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Project created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/projects/{id}/datasets": {
+      "post": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Create dataset and upload session",
+        "description": "Creates a logical dataset within the project and returns a resumable, expiring upload session with short-lived, single-object signed upload targets. A recording may consist of a set of files rather than a single object.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          },
+          {
+            "$ref": "#/components/parameters/idempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatasetCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset and upload session created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "dataset",
+                    "upload_session"
+                  ],
+                  "properties": {
+                    "dataset": {
+                      "$ref": "#/components/schemas/Dataset"
+                    },
+                    "upload_session": {
+                      "$ref": "#/components/schemas/UploadSession"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/datasets/{id}/complete": {
+      "post": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Finalise upload and begin validation",
+        "description": "Verifies that every declared object exists, matches its declared size and checksum, registers the file assets, and schedules ingestion and validation. Finalisation is idempotent and yields at most one dataset version.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/datasetId"
+          },
+          {
+            "$ref": "#/components/parameters/idempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatasetCompleteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload finalised and validation began.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetVersion"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Validation accepted and running asynchronously.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetVersion"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/datasets/{id}": {
+      "get": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Get dataset metadata",
+        "description": "Returns dataset metadata, its current status, and the latest dataset version.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/datasetId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                },
+                "example": {
+                  "id": "d1e2f3a4-5b6c-4d7e-8f90-1a2b3c4d5e6f",
+                  "project_id": "8c1d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+                  "name": "AEF-001",
+                  "source_type": "upload",
+                  "status": "ready",
+                  "latest_version": "v3",
+                  "created_at": "2026-05-01T09:14:00Z",
+                  "updated_at": "2026-05-09T10:02:00Z",
+                  "archived_at": null
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/recordings/{id}": {
+      "get": {
+        "tags": [
+          "recordings"
+        ],
+        "summary": "Get recording and acquisition metadata",
+        "description": "Returns acquisition metadata for a recording, including format, acquisition system, duration, sampling frequency, channel count, and coordinate frame.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/recordingId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recording and acquisition metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recording"
+                },
+                "example": {
+                  "id": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d",
+                  "dataset_version_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+                  "name": "AEF-001",
+                  "format": "fif",
+                  "acquisition_system": "squid",
+                  "device_serial": "Vectorview-204",
+                  "manufacturer": "Elekta Neuromag",
+                  "duration_s": 240.0,
+                  "sampling_frequency_hz": 1000.0,
+                  "n_channels": 315,
+                  "maxfilter_sss_applied": false,
+                  "coordinate_frame": "head",
+                  "bad_channel_names": [
+                    "MEG 0131",
+                    "MEG 2142"
+                  ],
+                  "created_at": "2026-05-09T10:02:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/recordings/{id}/channels": {
+      "get": {
+        "tags": [
+          "recordings"
+        ],
+        "summary": "List channel metadata",
+        "description": "Returns the channel inventory for a recording with explicit channel types, units, and quality status. Channels marked bad by the acquisition system are preserved rather than discarded.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/recordingId"
+          },
+          {
+            "$ref": "#/components/parameters/channelType"
+          },
+          {
+            "$ref": "#/components/parameters/channelStatus"
+          },
+          {
+            "$ref": "#/components/parameters/channelIds"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of channel metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelList"
+                },
+                "example": {
+                  "recording_id": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d",
+                  "items": [
+                    {
+                      "id": "c0ffee00-0000-4000-8000-000000000001",
+                      "recording_id": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d",
+                      "name": "MEG 0422",
+                      "group_name": "MEG planar gradiometers",
+                      "type": "grad",
+                      "unit": "tesla_per_metre",
+                      "unit_mul": 1.0,
+                      "status": "good",
+                      "coil_type": "planar",
+                      "position_mm": [
+                        0.0,
+                        31.7,
+                        62.4
+                      ],
+                      "orientation": [
+                        0.0,
+                        0.0,
+                        1.0
+                      ]
+                    },
+                    {
+                      "id": "c0ffee00-0000-4000-8000-000000000002",
+                      "recording_id": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d",
+                      "name": "MEG 0112",
+                      "group_name": "MEG magnetometers",
+                      "type": "mag",
+                      "unit": "tesla",
+                      "unit_mul": 1.0,
+                      "status": "good",
+                      "coil_type": "magnetometer",
+                      "position_mm": [
+                        -14.2,
+                        52.8,
+                        18.3
+                      ],
+                      "orientation": [
+                        0.0,
+                        0.0,
+                        1.0
+                      ]
+                    },
+                    {
+                      "id": "c0ffee00-0000-4000-8000-000000000003",
+                      "recording_id": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d",
+                      "name": "MEG 0131",
+                      "group_name": "MEG planar gradiometers",
+                      "type": "grad",
+                      "unit": "tesla_per_metre",
+                      "unit_mul": 1.0,
+                      "status": "bad",
+                      "coil_type": "planar",
+                      "position_mm": [
+                        -47.9,
+                        24.6,
+                        38.2
+                      ],
+                      "orientation": [
+                        0.0,
+                        0.0,
+                        1.0
+                      ]
+                    }
+                  ],
+                  "total": 315,
+                  "next_cursor": null,
+                  "has_more": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/recordings/{id}/events": {
+      "get": {
+        "tags": [
+          "recordings"
+        ],
+        "summary": "List event sets",
+        "description": "Returns event sets attached to a recording together with their provenance, sample convention, and metadata. Event times always identify the relevant time base and sample convention.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/recordingId"
+          },
+          {
+            "$ref": "#/components/parameters/eventSource"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of event sets.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventSetList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/recordings/{id}/signals": {
+      "get": {
+        "tags": [
+          "signals"
+        ],
+        "summary": "Retrieve a bounded signal window or multiresolution summary",
+        "description": "Returns a bounded, access-controlled signal window or a precomputed multiresolution summary. The API never streams an entire recording through its own memory. Request parameters are validated server-side and responses are bounded.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/recordingId"
+          },
+          {
+            "$ref": "#/components/parameters/tminS"
+          },
+          {
+            "$ref": "#/components/parameters/tmaxS"
+          },
+          {
+            "$ref": "#/components/parameters/channelIds"
+          },
+          {
+            "$ref": "#/components/parameters/resolution"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A bounded signal window or summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignalWindow"
+                },
+                "example": {
+                  "recording_id": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d",
+                  "tmin_s": 1.5,
+                  "tmax_s": 2.5,
+                  "sampling_frequency_hz": 1000.0,
+                  "effective_sampling_frequency_hz": 250.0,
+                  "resolution": "medium",
+                  "decimation": 4,
+                  "channel_names": [
+                    "MEG 0422",
+                    "MEG 0112",
+                    "MEG 0131"
+                  ],
+                  "unit": "tesla_per_metre",
+                  "times_s": [
+                    1.5,
+                    1.504,
+                    1.508
+                  ],
+                  "data": [
+                    [
+                      1.2e-12,
+                      1.1e-12,
+                      1.3e-12
+                    ],
+                    [
+                      2.1e-13,
+                      2e-13,
+                      2.2e-13
+                    ],
+                    [
+                      0.0,
+                      0.0,
+                      0.0
+                    ]
+                  ],
+                  "truncated": false,
+                  "max_samples": 200000
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial content returned for a bounded range.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignalWindow"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/recordings/{id}/sensors": {
+      "get": {
+        "tags": [
+          "sensors"
+        ],
+        "summary": "Retrieve sensor geometry where available",
+        "description": "Returns the sensor configuration for a recording, including sensor type, positions, orientations, calibrations, coordinate frame, and a movement reference where time-varying OPM geometry exists. Geometry is never inferred when it is absent.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/recordingId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sensor configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorConfiguration"
+                },
+                "example": {
+                  "id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                  "recording_id": "b7c1a2d3-4e5f-4a6b-8c9d-0e1f2a3b4c5d",
+                  "sensor_type": "gradiometer",
+                  "coordinate_frame": "head",
+                  "length_unit": "mm",
+                  "time_varying": false,
+                  "sensors": [
+                    {
+                      "name": "MEG 0422",
+                      "type": "gradiometer",
+                      "channel_names": [
+                        "MEG 0421",
+                        "MEG 0422",
+                        "MEG 0423"
+                      ],
+                      "position_mm": [
+                        0.0,
+                        31.7,
+                        62.4
+                      ],
+                      "orientation": [
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "calibration": 1.0
+                    }
+                  ],
+                  "created_at": "2026-05-09T10:02:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "description": "Sensor geometry is not available for this recording.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/pipelines": {
+      "post": {
+        "tags": [
+          "pipelines"
+        ],
+        "summary": "Create a pipeline",
+        "description": "Creates the logical identity of an analysis workflow within a project. Versioned definitions are added separately.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipelineCreate"
+              },
+              "example": {
+                "project_id": "8c1d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+                "name": "event-related-analysis",
+                "description": "Filter, epoch, baseline, and average MEG recordings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pipeline created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipeline"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/pipelines/{id}/versions": {
+      "post": {
+        "tags": [
+          "pipelines"
+        ],
+        "summary": "Create a versioned pipeline definition",
+        "description": "Creates an immutable, versioned pipeline definition pinned to an OCI image digest. Edits create a new version rather than mutating an existing one.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pipelineId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipelineVersionCreate"
+              },
+              "example": {
+                "version": "1.2.0",
+                "definition": {
+                  "nodes": [
+                    {
+                      "id": "filter",
+                      "op": "mne.filter.filter_data"
+                    },
+                    {
+                      "id": "epochs",
+                      "op": "mne.Epochs"
+                    },
+                    {
+                      "id": "evoked",
+                      "op": "mne.Epochs.average"
+                    }
+                  ]
+                },
+                "image_digest": "sha256:9f3c1b7a41d0e8c25b6a7f0d4e12ab93c8f5e6d2aa7b8c9d0e1f2a3b4c5d6e7",
+                "parameters_schema": {
+                  "type": "object",
+                  "properties": {
+                    "filter": {
+                      "type": "object"
+                    },
+                    "epoch": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "status": "published"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pipeline version created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipelineVersion"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/runs": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Submit an experiment",
+        "description": "Validates parameters against the pipeline version schema, creates a durable run record and an outbox event in the same transaction, and returns promptly without waiting for computation. Requires a client-supplied Idempotency-Key to prevent duplicate billable runs.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunCreate"
+              },
+              "example": {
+                "project_id": "8c1d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+                "pipeline_version_id": "2a3b4c5d-6e7f-4a8b-9c0d-1e2f3a4b5c6d",
+                "dataset_version_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+                "parameters": {
+                  "filter": {
+                    "l_freq_hz": 1.0,
+                    "h_freq_hz": 40.0
+                  },
+                  "epoch": {
+                    "tmin_s": -0.2,
+                    "tmax_s": 0.8,
+                    "baseline_s": [
+                      -0.2,
+                      0.0
+                    ]
+                  }
+                },
+                "sensor_configuration_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                "resource_limits": {
+                  "cpu_cores": 4.0,
+                  "memory_bytes": 8589934592,
+                  "wall_clock_limit_s": 3600
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Run accepted for asynchronous execution.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                },
+                "example": {
+                  "id": "run_9f3c1b7a",
+                  "project_id": "8c1d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+                  "pipeline_version_id": "2a3b4c5d-6e7f-4a8b-9c0d-1e2f3a4b5c6d",
+                  "dataset_version_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+                  "sensor_configuration_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                  "status": "queued",
+                  "parameters": {
+                    "filter": {
+                      "l_freq_hz": 1.0,
+                      "h_freq_hz": 40.0
+                    },
+                    "epoch": {
+                      "tmin_s": -0.2,
+                      "tmax_s": 0.8,
+                      "baseline_s": [
+                        -0.2,
+                        0.0
+                      ]
+                    }
+                  },
+                  "initiated_by": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+                  "started_at": null,
+                  "finished_at": null,
+                  "created_at": "2026-05-14T14:22:58Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "List experiment runs",
+        "description": "Returns runs the authenticated user can access, optionally filtered by project or status, ordered by created_at descending.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of run statuses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/runs/{id}": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Retrieve job status",
+        "description": "Returns the durable run record including status, timing, parameters, sensor configuration reference, and failure classification. Run state is always readable from the primary datastore.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/runId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Experiment run.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                },
+                "example": {
+                  "id": "run_9f3c1b7a",
+                  "project_id": "8c1d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+                  "pipeline_version_id": "2a3b4c5d-6e7f-4a8b-9c0d-1e2f3a4b5c6d",
+                  "dataset_version_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+                  "sensor_configuration_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                  "status": "running",
+                  "parameters": {
+                    "filter": {
+                      "l_freq_hz": 1.0,
+                      "h_freq_hz": 40.0
+                    },
+                    "epoch": {
+                      "tmin_s": -0.2,
+                      "tmax_s": 0.8,
+                      "baseline_s": [
+                        -0.2,
+                        0.0
+                      ]
+                    }
+                  },
+                  "error_classification": null,
+                  "initiated_by": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+                  "started_at": "2026-05-14T14:23:00Z",
+                  "finished_at": null,
+                  "created_at": "2026-05-14T14:22:58Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/runs/{id}/logs": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Retrieve authorised logs",
+        "description": "Returns authorised, paginated run logs. Logs never contain secrets, signed URLs, or other users' data, and signal data is never written to logs.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/runId"
+          },
+          {
+            "$ref": "#/components/parameters/logLevel"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of run log lines.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogList"
+                },
+                "example": {
+                  "run_id": "run_9f3c1b7a",
+                  "items": [
+                    {
+                      "sequence": 0,
+                      "timestamp": "2026-05-14T14:23:01Z",
+                      "level": "info",
+                      "source": "init",
+                      "message": "[init] loading dataset AEF-001 v3 (SHA-256: 1f9ba3c7...)"
+                    },
+                    {
+                      "sequence": 1,
+                      "timestamp": "2026-05-14T14:27:02Z",
+                      "level": "warn",
+                      "source": "exec",
+                      "message": "[exec] 1-DC offset reported on MEG 0131 (bad); excluded from average"
+                    }
+                  ],
+                  "next_cursor": null,
+                  "has_more": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/runs/{id}/artifacts": {
+      "get": {
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "List outputs",
+        "description": "Returns artifacts produced by a run, each with an object key, checksum, media type, and kind. Download URLs are issued only after an authorisation check and are short-lived and single-object.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/runId"
+          },
+          {
+            "$ref": "#/components/parameters/artifactKind"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of run artifacts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/projects/{id}/shares": {
+      "post": {
+        "tags": [
+          "shares"
+        ],
+        "summary": "Create a scoped sharing link",
+        "description": "Creates a scoped, optionally expiring sharing link for a project, dataset, or run. The link grants only the declared scope and role.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareCreate"
+              },
+              "example": {
+                "scope": "dataset",
+                "resource_id": "d1e2f3a4-5b6c-4d7e-8f90-1a2b3c4d5e6f",
+                "role": "viewer",
+                "expires_at": "2026-06-14T00:00:00Z"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sharing link created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Share"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Sign in",
+        "description": "Creates an authenticated session and sets the session cookie.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login success."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Sign out",
+        "description": "Terminates the current session and clears the session cookie.",
+        "security": [],
+        "responses": {
+          "204": {
+            "description": "Logged out."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register",
+        "description": "Creates a new user identity through the configured identity provider.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password",
+                  "display_name"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "display_name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created."
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/auth/password-reset": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Request password reset",
+        "description": "Starts a password recovery flow through the configured identity provider.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reset requested."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Current user",
+        "description": "Returns the identity resolved from the authenticated session.",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "email",
+                    "display_name"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "display_name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/usage": {
+      "get": {
+        "tags": [
+          "usage"
+        ],
+        "summary": "List usage records",
+        "description": "Returns append-only resource consumption records for quota and cost reporting.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cursor"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage records.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/quotas": {
+      "get": {
+        "tags": [
+          "usage"
+        ],
+        "summary": "Current quotas",
+        "description": "Returns current storage and compute quota usage for the authenticated user.",
+        "responses": {
+          "200": {
+            "description": "Quotas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "storage_bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "core_hours": {
+                      "type": "number",
+                      "format": "float"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/health/live": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Liveness probe",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthLive"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Readiness probe",
+        "description": "Reports readiness, including whether required dependencies such as PostgreSQL and object storage are reachable.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthReady"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Not ready.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthReady"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

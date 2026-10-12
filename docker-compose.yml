@@ -1,0 +1,142 @@
+name: meg-lab
+
+services:
+  postgres:
+    container_name: meg-lab-postgres
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: meglab
+      POSTGRES_PASSWORD: meglab
+      POSTGRES_DB: meglab
+    ports:
+      - '5433:5432'
+    volumes:
+      - meg-lab-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U meglab -d meglab']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    container_name: meg-lab-redis
+    image: redis:8-alpine
+    ports:
+      - '6380:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  migrate:
+    container_name: meg-lab-migrate
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    command: ['uv', 'run', 'python', '-m', 'app.db.migrate']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      MEG_DATABASE_URL: postgresql://meglab:meglab@postgres:5432/meglab
+    restart: 'no'
+
+  api:
+    container_name: meg-lab-api
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    ports:
+      - '8001:8000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      MEG_APP_ENV: development
+      MEG_AUTH_MODE: development
+      MEG_DATABASE_URL: postgresql://meglab:meglab@postgres:5432/meglab
+      MEG_REDIS_URL: redis://redis:6379/0
+      MEG_STORAGE_BACKEND: file
+      MEG_STORAGE_DATA_DIR: /data/storage
+      MEG_PUBLIC_BASE_URL: http://localhost:8001
+      MEG_SESSION_SECRET: dev-session-secret-change-me
+      MEG_JWT_SECRET: dev-jwt-secret-change-me
+      MEG_MNE_WORKER_IMAGE: meg-lab-mne:0.1.0
+    volumes:
+      - meg-lab-storage:/data/storage
+    restart: unless-stopped
+
+  worker:
+    container_name: meg-lab-worker
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile.mne
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      MEG_APP_ENV: development
+      MEG_AUTH_MODE: development
+      MEG_DATABASE_URL: postgresql://meglab:meglab@postgres:5432/meglab
+      MEG_REDIS_URL: redis://redis:6379/0
+      MEG_STORAGE_BACKEND: file
+      MEG_STORAGE_DATA_DIR: /data/storage
+      MEG_SESSION_SECRET: dev-session-secret-change-me
+      MEG_JWT_SECRET: dev-jwt-secret-change-me
+      MEG_MNE_WORKER_IMAGE: meg-lab-mne:0.1.0
+    volumes:
+      - meg-lab-storage:/data/storage
+    restart: unless-stopped
+
+  dispatcher:
+    container_name: meg-lab-dispatcher
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    command: ['uv', 'run', 'python', '-m', 'workers.dispatcher']
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      MEG_APP_ENV: development
+      MEG_DATABASE_URL: postgresql://meglab:meglab@postgres:5432/meglab
+      MEG_REDIS_URL: redis://redis:6379/0
+      MEG_SESSION_SECRET: dev-session-secret-change-me
+      MEG_JWT_SECRET: dev-jwt-secret-change-me
+    init: true
+    restart: unless-stopped
+
+  frontend:
+    container_name: meg-lab-frontend
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8001/api/v1}
+    ports:
+      - '3000:3000'
+    environment:
+      API_INTERNAL_BASE_URL: http://api:8000/api/v1
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  meg-lab-pgdata:
+  meg-lab-storage:

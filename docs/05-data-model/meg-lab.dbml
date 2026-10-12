@@ -1,0 +1,626 @@
+Project MEGLab {
+  database_type: 'PostgreSQL'
+  Note: 'ER diagram for the MEG Lab application schema. Kept in sync with the versioned SQL migrations under packages/backend/app/db/migrations/. Lifecycle statuses are modelled as DBML enums that map to constrained TEXT values with CHECK constraints in PostgreSQL. Raw and derived MEG signals are never stored in relational columns: recording bytes, channel inventories beyond metadata summaries, sensor geometry, and artifacts live in S3-compatible object storage and are referenced by object key.'
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+Enum visibility {
+  private
+  public
+  link
+}
+
+Enum project_role {
+  owner
+  editor
+  viewer
+}
+
+Enum dataset_source_type {
+  upload
+  import
+  sample
+}
+
+Enum dataset_status {
+  uploading
+  validating
+  ready
+  failed
+}
+
+Enum recording_format {
+  fif
+  ctf
+  kit
+  bin
+  bids
+}
+
+Enum acquisition_system {
+  squid
+  opm
+}
+
+Enum channel_type {
+  mag
+  grad
+  eeg
+  eog
+  ecg
+  stim
+  misc
+  opm
+}
+
+Enum channel_status {
+  good
+  bad
+}
+
+Enum unit {
+  tesla
+  tesla_per_metre
+  volt
+  amperes
+  dimensionless
+  other
+}
+
+Enum coordinate_frame {
+  head
+  device
+  opm
+}
+
+Enum sensor_type {
+  magnetometer
+  gradiometer
+  opm_scalar
+  opm_vector
+  aux
+}
+
+Enum pipeline_status {
+  draft
+  published
+  archived
+}
+
+Enum run_status {
+  queued
+  running
+  succeeded
+  failed
+  cancelled
+}
+
+Enum resource_type {
+  core_hours
+  storage_bytes
+}
+
+Enum artifact_kind {
+  original
+  derived
+  report
+  manifest
+}
+
+Enum outbox_status {
+  pending
+  published
+  failed
+}
+
+// ---------------------------------------------------------------------------
+// Identity and access
+// ---------------------------------------------------------------------------
+
+Table users {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  email text [not null, note: 'Contact information, not the permanent identity key; case-insensitive lookup']
+  display_name text
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (email) [unique, name: 'uq_users_email']
+  }
+
+  Note: 'Application user identity. Passwords are never stored; an external OIDC provider owns the authoritative identity record.'
+}
+
+Table projects {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  owner_id uuid [not null]
+  name text [not null, note: 'Required, non-empty']
+  description text
+  visibility visibility [not null, default: 'private']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  archived_at timestamptz
+
+  indexes {
+    (owner_id, created_at) [name: 'ix_projects_owner_created_at', note: 'created_at is DESC']
+    (visibility, created_at) [name: 'ix_projects_visibility_created_at', note: 'created_at is DESC']
+  }
+
+  Note: 'Top-level workspace. The owner is also represented as an owner row in project_members; the last-owner invariant requires transactional application logic.'
+}
+
+Table project_members {
+  project_id uuid [not null]
+  user_id uuid [not null]
+  role project_role [not null]
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (project_id, user_id) [unique, name: 'uq_project_members_project_user']
+    (user_id) [name: 'ix_project_members_user_id']
+  }
+
+  Note: 'Primary key is (project_id, user_id). Role changes and membership removals must generate audit events.'
+}
+
+// ---------------------------------------------------------------------------
+// Datasets and recordings
+// ---------------------------------------------------------------------------
+
+Table datasets {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  project_id uuid [not null]
+  name text [not null, note: 'Required, non-empty; not unique within a project, e.g. AEF-001']
+  source_type dataset_source_type [not null]
+  status dataset_status [not null, default: 'uploading']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  archived_at timestamptz
+
+  indexes {
+    (project_id, created_at) [name: 'ix_datasets_project_created_at', note: 'created_at is DESC']
+    (project_id, id) [unique, name: 'uq_datasets_project_id_id', note: 'Supports composite project-scoped foreign keys']
+    (status) [name: 'ix_datasets_status']
+  }
+
+  Note: 'Logical dataset identity within a project, deliberately separated from its immutable versions. A dataset may contain multiple recordings and holds no signal data itself.'
+}
+
+Table dataset_versions {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  dataset_id uuid [not null]
+  version text [not null, note: 'Monotonic version label, e.g. "v3"; must be non-empty']
+  manifest jsonb [not null, default: `'{}'::jsonb`, note: 'Validated snapshot manifest: file set, channel inventory, sampling frequency, duration, coordinate frame, time-base and sample conventions']
+  status dataset_status [not null, default: 'validating']
+  checksum text [note: 'SHA-256 in the documented sha256:... representation; required when status is ready']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (dataset_id, version) [unique, name: 'uq_dataset_versions_dataset_version']
+    (dataset_id, created_at) [name: 'ix_dataset_versions_dataset_created_at', note: 'created_at is DESC']
+    (dataset_id, id) [unique, name: 'uq_dataset_versions_dataset_id_id', note: 'Supports composite project-scoped foreign keys']
+  }
+
+  Note: 'Immutable snapshots of a dataset. A ready version must reference at least one file_assets row with a valid SHA-256 checksum, must have a complete format file set, and must not change thereafter.'
+}
+
+Table recordings {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  dataset_version_id uuid [not null]
+  name text [not null, note: 'Human-readable recording label, e.g. AEF-001']
+  format recording_format [not null]
+  acquisition_system acquisition_system [not null]
+  device_serial text [note: 'Vendor device identifier where available, e.g. Vectorview-204']
+  manufacturer text
+  duration_s double precision [not null, note: 'Must be non-negative']
+  sampling_frequency_hz double precision [not null, note: 'Must be positive; native acquisition rate, e.g. 1000.0']
+  n_channels integer [not null, note: 'Must be positive; total channel count including auxiliary channels']
+  maxfilter_sss_applied boolean [default: false, note: 'Nullable; null when the acquisition does not report MaxFilter/SSS history']
+  coordinate_frame coordinate_frame [not null, default: 'head']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (dataset_version_id, created_at) [name: 'ix_recordings_dataset_version_created_at', note: 'created_at is DESC']
+    (dataset_version_id, id) [unique, name: 'uq_recordings_dataset_version_id_id', note: 'Supports composite project-scoped foreign keys']
+    (acquisition_system) [name: 'ix_recordings_acquisition_system']
+  }
+
+  Note: 'Acquisition metadata for one recording within an immutable dataset version. Every recording must retain its acquisition format, acquisition-system class, and source-file references. The declared coordinate_frame is authoritative and is never inferred.'
+}
+
+Table file_assets {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  recording_id uuid [not null]
+  object_key text [not null, note: 'Server-generated private object key; never a permanent signed URL and never an authorisation token']
+  checksum text [not null, note: 'SHA-256 in the documented sha256:... representation; required for every asset']
+  size_bytes bigint [not null, note: 'Must be non-negative']
+  media_type text [not null, note: 'e.g. application/octet-stream, application/json, text/tab-separated-values']
+  role text [not null, note: 'One of recording, events, channels, coordsystem, calibration, crosstalk, header, metadata, companion']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (object_key) [unique, name: 'uq_file_assets_object_key']
+    (recording_id) [name: 'ix_file_assets_recording_id']
+    (recording_id, role) [name: 'ix_file_assets_recording_role']
+  }
+
+  Note: 'Individual files belonging to a recording. A recording may consist of a set of files rather than a single object; a directory-based format such as CTF .ds is only complete when every required companion file is present. Signal content lives in object storage and only metadata and the object key are stored here.'
+}
+
+Table channels {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  recording_id uuid [not null]
+  name text [not null, note: 'Channel label, e.g. MEG 0422']
+  group_name text [note: 'Display grouping, e.g. MEG planar gradiometers']
+  type channel_type [not null]
+  unit unit [not null, note: 'Physical unit of stored sample values after applying unit_mul']
+  unit_mul double precision [not null, default: 1.0, note: 'Multiplier applied to stored sample values to obtain the declared unit']
+  status channel_status [not null, default: 'good', note: 'Channels marked bad by the acquisition system are preserved, not discarded']
+  coil_type text [note: 'Vendor coil classification, e.g. planar, axial, magnetometer']
+  position_x_mm double precision
+  position_y_mm double precision
+  position_z_mm double precision
+  orientation_x double precision
+  orientation_y double precision
+  orientation_z double precision
+  opm_scalar boolean [note: 'Nullable; true when the channel belongs to an OPM scalar sensor']
+  opm_vector boolean [note: 'Nullable; true when the channel belongs to an OPM vector sensor']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (recording_id, name) [unique, name: 'uq_channels_recording_name']
+    (recording_id, type) [name: 'ix_channels_recording_type']
+    (recording_id, status) [name: 'ix_channels_recording_status']
+  }
+
+  Note: 'Channel inventory metadata. Channel types and units are stored explicitly: not every channel represents a MEG sensor, and auxiliary channels (EOG, ECG, stim) are represented with their own types and units. Positions and orientations are expressed in the owning recording coordinate_frame.'
+}
+
+Table sensor_configurations {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  recording_id uuid [not null]
+  sensor_type sensor_type [not null]
+  coordinate_frame coordinate_frame [not null]
+  positions_json jsonb [not null, default: `'{}'::jsonb`, note: 'Sensor positions with explicit length unit; finite and dimensionally consistent']
+  orientations_json jsonb [not null, default: `'{}'::jsonb`, note: 'Sensor orientation unit vectors in the declared frame']
+  calibrations_json jsonb [note: 'Per-channel calibration and unit information where available']
+  movement_ref text [note: 'Reference to movement-tracking data when time-varying OPM geometry exists']
+  time_varying boolean [not null, default: false, note: 'True when sensor geometry may vary over the recording and tracking data exists']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (recording_id) [name: 'ix_sensor_configurations_recording_id']
+    (coordinate_frame) [name: 'ix_sensor_configurations_coordinate_frame']
+  }
+
+  Note: 'Sensor geometry for a recording. OPM sensor geometry may vary between recordings and, when movement tracking exists, may vary over time; geometry is therefore recorded per recording and never assumed constant across a project. The coordinate frame must always be explicit.'
+}
+
+Table event_sets {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  recording_id uuid [not null]
+  name text [not null]
+  source text [not null, note: 'Provenance, e.g. acquisition, annotation, derived']
+  sample_convention text [not null, note: 'Convention for interpreting event sample indices, e.g. onset, first_sample, mid_sample, trigger']
+  event_count integer [not null, default: 0, note: 'Number of events in the set; must be non-negative']
+  description text
+  metadata jsonb [not null, default: `'{}'::jsonb`, note: 'Event definitions, stimulus channel, and time-base metadata']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (recording_id, created_at) [name: 'ix_event_sets_recording_created_at', note: 'created_at is DESC']
+    (recording_id, source) [name: 'ix_event_sets_recording_source']
+  }
+
+  Note: 'Event definitions and provenance attached to a recording. Event times must identify the relevant recording time base and sample convention. Large event arrays should be normalised or stored as compact artifacts rather than large JSON blobs.'
+}
+
+// ---------------------------------------------------------------------------
+// Pipelines and runs
+// ---------------------------------------------------------------------------
+
+Table pipelines {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  project_id uuid [not null]
+  name text [not null, note: 'Required, non-empty; not unique within a project, e.g. event-related-analysis']
+  description text
+  status pipeline_status [not null, default: 'draft']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (project_id, created_at) [name: 'ix_pipelines_project_created_at', note: 'created_at is DESC']
+    (project_id, id) [unique, name: 'uq_pipelines_project_id_id', note: 'Supports composite project-scoped foreign keys']
+  }
+
+  Note: 'Logical identity of an analysis workflow within a project.'
+}
+
+Table pipeline_versions {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  pipeline_id uuid [not null]
+  version text [not null, note: 'Semantic version label, e.g. 1.2.0']
+  definition jsonb [not null, note: 'Validated workflow definition consumed by the versioned container']
+  image_digest text [not null, note: 'Immutable OCI image digest (sha256:...); not a mutable tag']
+  parameters_schema jsonb [not null, default: `'{}'::jsonb`, note: 'JSON Schema used to validate run parameters against this version']
+  status pipeline_status [not null, default: 'draft']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (pipeline_id, version) [unique, name: 'uq_pipeline_versions_pipeline_version']
+    (pipeline_id, created_at) [name: 'ix_pipeline_versions_pipeline_created_at', note: 'created_at is DESC']
+  }
+
+  Note: 'Immutable, versioned pipeline definitions pinned to an OCI image digest. Edits create a new version rather than mutating an existing one.'
+}
+
+Table experiment_runs {
+  id text [pk, not null, note: 'Stable run identifier, e.g. run_9f3c1b7a']
+  project_id uuid [not null, note: 'Scopes access checks; pipeline version, dataset version, and project must be consistent']
+  pipeline_version_id uuid [not null]
+  dataset_version_id uuid [not null]
+  sensor_configuration_id uuid [note: 'Reference to the sensor configuration used where geometry matters']
+  initiated_by uuid [not null]
+  status run_status [not null, default: 'queued']
+  parameters jsonb [not null, default: `'{}'::jsonb`, note: 'Validated against the pipeline version parameters_schema']
+  idempotency_key text [not null, note: 'Client-provided key that prevents duplicate billable run creation']
+  error_classification text [note: 'Sanitised failure classification, e.g. invalid_input, unsupported_format, transient_infra']
+  cpu_limit_cores double precision
+  memory_limit_bytes bigint
+  disk_limit_bytes bigint
+  wall_clock_limit_s integer
+  started_at timestamptz
+  finished_at timestamptz [note: 'Populated when a terminal state is reached']
+  created_at timestamptz [not null, default: `now()`, note: 'Submission time']
+
+  indexes {
+    (idempotency_key) [unique, name: 'uq_experiment_runs_idempotency_key']
+    (status, created_at) [name: 'ix_experiment_runs_status_created_at', note: 'created_at is DESC; for the work queue']
+    (dataset_version_id, created_at) [name: 'ix_experiment_runs_dataset_version_created_at', note: 'created_at is DESC']
+    (pipeline_version_id, created_at) [name: 'ix_experiment_runs_pipeline_version_created_at', note: 'created_at is DESC']
+    (project_id, created_at) [name: 'ix_experiment_runs_project_created_at', note: 'created_at is DESC']
+  }
+
+  Note: 'Durable execution state for a submitted pipeline version over a dataset version. Status transitions are queued -> running -> succeeded/failed/cancelled; started_at and finished_at are recorded accordingly. Requested resource limits are captured here. Pipeline version, dataset version, and the owning project must be consistent. Job submission is deduplicated with idempotency_key.'
+}
+
+// ---------------------------------------------------------------------------
+// Outputs and provenance
+// ---------------------------------------------------------------------------
+
+Table artifacts {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  run_id text [not null]
+  object_key text [not null, note: 'Server-generated private object key; globally unique']
+  checksum text [not null, note: 'SHA-256 in the documented sha256:... representation; required']
+  size_bytes bigint [not null, note: 'Must be non-negative']
+  media_type text [not null, note: 'e.g. application/octet-stream, image/png, text/csv, application/json']
+  kind artifact_kind [not null, default: 'derived']
+  metadata jsonb [not null, default: `'{}'::jsonb`, note: 'Validated supplementary metadata; must not contain raw signal arrays']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (object_key) [unique, name: 'uq_artifacts_object_key']
+    (run_id) [name: 'ix_artifacts_run_id']
+    (run_id, kind) [name: 'ix_artifacts_run_kind']
+  }
+
+  Note: 'Processed recordings, epochs, evoked responses, spectra, sensor topographies, plots, reports, and manifests produced by a run. Artifact content lives in object storage. Checksums are required so a run outputs can be verified and historical results are never silently overwritten.'
+}
+
+Table usage_records {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  user_id uuid [not null]
+  run_id text [note: 'Nullable; usage may accrue outside a run']
+  resource_type resource_type [not null]
+  quantity bigint [not null, note: 'Non-negative consumed quantity, in core hours or bytes according to resource_type']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (user_id, created_at) [name: 'ix_usage_records_user_created_at', note: 'created_at is DESC']
+    (run_id) [name: 'ix_usage_records_run_id']
+    (resource_type, created_at) [name: 'ix_usage_records_resource_type_created_at', note: 'created_at is DESC']
+  }
+
+  Note: 'Append-only accounting of resource consumption for quota and cost reporting.'
+}
+
+// ---------------------------------------------------------------------------
+// Platform
+// ---------------------------------------------------------------------------
+
+Table audit_events {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  actor_id uuid [note: 'Nullable for system actions']
+  action text [not null, note: 'e.g. run.submitted, dataset.version_ready, project.created']
+  resource_type text [not null, note: 'Affected resource type']
+  resource_id text [note: 'Affected resource identifier']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (resource_type, resource_id, created_at) [name: 'ix_audit_events_resource_created_at', note: 'created_at is DESC']
+    (actor_id, created_at) [name: 'ix_audit_events_actor_created_at', note: 'created_at is DESC']
+  }
+
+  Note: 'Append-only audit trail. Never store tokens, signed URLs, sensor geometry payloads, or raw signal data. Where integrity requires it, persist the event in the same transaction as the related change.'
+}
+
+Table outbox_events {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  topic text [not null, note: 'Dispatch topic, e.g. run.dispatch, dataset.validate']
+  payload jsonb [not null, note: 'Minimal validated dispatch payload; must not contain secrets or raw signal data']
+  status outbox_status [not null, default: 'pending']
+  attempts integer [not null, default: 0, note: 'Delivery attempt count; must be non-negative']
+  created_at timestamptz [not null, default: `now()`]
+  published_at timestamptz [note: 'Populated exactly when the event reaches published']
+
+  indexes {
+    (status, created_at) [name: 'ix_outbox_events_status_created_at', note: 'For the dispatcher']
+    (published_at) [name: 'ix_outbox_events_published_at', note: 'For retention and reconciliation workers']
+    (topic, created_at) [name: 'ix_outbox_events_topic_created_at', note: 'created_at is DESC']
+  }
+
+  Note: 'Reliable publication of background work. A run and its outbox event are committed in the same transaction so a run is durable even if queue publication is temporarily unavailable. A dispatcher may claim rows with FOR UPDATE SKIP LOCKED; consumers must be idempotent.'
+}
+
+// ---------------------------------------------------------------------------
+// Relationships
+// ---------------------------------------------------------------------------
+
+Ref: projects.owner_id > users.id [delete: restrict]
+Ref: project_members.project_id > projects.id [delete: cascade]
+Ref: project_members.user_id > users.id [delete: cascade]
+
+Ref: datasets.project_id > projects.id [delete: restrict]
+Ref: dataset_versions.dataset_id > datasets.id [delete: restrict]
+Ref: recordings.dataset_version_id > dataset_versions.id [delete: restrict]
+Ref: file_assets.recording_id > recordings.id [delete: cascade]
+Ref: channels.recording_id > recordings.id [delete: cascade]
+Ref: sensor_configurations.recording_id > recordings.id [delete: cascade]
+Ref: event_sets.recording_id > recordings.id [delete: cascade]
+
+Ref: pipelines.project_id > projects.id [delete: restrict]
+Ref: pipeline_versions.pipeline_id > pipelines.id [delete: restrict]
+
+Ref: experiment_runs.pipeline_version_id > pipeline_versions.id [delete: restrict]
+Ref: experiment_runs.dataset_version_id > dataset_versions.id [delete: restrict]
+Ref: experiment_runs.project_id > projects.id [delete: restrict]
+Ref: experiment_runs.sensor_configuration_id > sensor_configurations.id [delete: set null]
+Ref: experiment_runs.initiated_by > users.id [delete: restrict]
+
+Ref: artifacts.run_id > experiment_runs.id [delete: cascade]
+
+Ref: usage_records.user_id > users.id [delete: restrict]
+Ref: usage_records.run_id > experiment_runs.id [delete: set null]
+
+Ref: audit_events.actor_id > users.id [delete: set null]
+
+// ---------------------------------------------------------------------------
+// Platform tables (API contract support; migrations are canonical)
+// ---------------------------------------------------------------------------
+
+// Local development identity (AUTH_MODE=development only). In production
+// the external OIDC provider owns the authoritative identity record.
+Table auth_credentials {
+  user_id uuid [pk, not null]
+  email text [not null]
+  password_hash text [not null]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  indexes {
+    (email) [unique, name: 'uq_auth_credentials_email', note: 'case-insensitive via lower(email)']
+  }
+}
+Ref: auth_credentials.user_id > users.id [delete: cascade]
+
+Table sessions {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  user_id uuid [not null]
+  token_hash text [not null, note: 'SHA-256 of the opaque session token']
+  user_agent text
+  ip_address text
+  created_at timestamptz [not null, default: `now()`]
+  expires_at timestamptz [not null]
+  revoked_at timestamptz
+  indexes {
+    (token_hash) [unique, name: 'uq_sessions_token_hash']
+    (user_id) [name: 'ix_sessions_user_id']
+  }
+}
+Ref: sessions.user_id > users.id [delete: cascade]
+
+Table password_reset_tokens {
+  token_hash text [pk, not null]
+  user_id uuid [not null]
+  expires_at timestamptz [not null]
+  used_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+}
+Ref: password_reset_tokens.user_id > users.id [delete: cascade]
+
+Table upload_sessions {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  dataset_id uuid [not null]
+  project_id uuid [not null]
+  status text [not null, default: 'pending', note: 'pending | completed | expired | aborted']
+  expected_size_bytes bigint
+  checksum_sha256 text
+  declared_format text [note: 'fif | ctf | kit | bin | bids; upload-session bookkeeping']
+  acquisition_system text [note: 'squid | opm']
+  expires_at timestamptz [not null]
+  created_at timestamptz [not null, default: `now()`]
+  completed_at timestamptz
+  indexes {
+    (dataset_id) [name: 'ix_upload_sessions_dataset_id']
+    (expires_at) [name: 'ix_upload_sessions_expires_at']
+  }
+}
+Ref: upload_sessions.dataset_id > datasets.id [delete: cascade]
+Ref: upload_sessions.project_id > projects.id [delete: cascade]
+
+Table upload_targets {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  upload_session_id uuid [not null]
+  name text [not null]
+  object_key text [not null]
+  size_bytes bigint [not null]
+  checksum_sha256 text
+  media_type text
+  role text [not null, note: 'recording | events | channels | coordsystem | calibration | crosstalk | header | companion | metadata']
+  uploaded_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+  indexes {
+    (upload_session_id, object_key) [unique, name: 'uq_upload_targets_session_object']
+  }
+}
+Ref: upload_targets.upload_session_id > upload_sessions.id [delete: cascade]
+
+Table run_logs {
+  run_id text [not null]
+  sequence bigint [not null]
+  timestamp timestamptz [not null, default: `now()`]
+  level text [not null, note: 'debug | info | warn | error']
+  source text
+  message text [not null]
+  indexes {
+    (run_id, sequence) [pk, name: 'pk_run_logs']
+  }
+}
+Ref: run_logs.run_id > experiment_runs.id [delete: cascade]
+
+Table shares {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  project_id uuid [not null]
+  resource_id uuid [note: 'Target resource for dataset/run-scoped shares; null for project scope']
+  scope text [not null, note: 'project | dataset | run']
+  role text [not null, note: 'Shares grant read-only access']
+  token_hash text [not null]
+  created_by uuid [not null]
+  expires_at timestamptz
+  revoked_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+  indexes {
+    (token_hash) [unique, name: 'uq_shares_token_hash']
+    (project_id) [name: 'ix_shares_project_id']
+  }
+}
+Ref: shares.project_id > projects.id [delete: cascade]
+Ref: shares.created_by > users.id [delete: restrict]
+
+Table idempotency_keys {
+  key text [not null]
+  user_id uuid [not null]
+  request_hash text [not null]
+  response_status integer [not null]
+  response_body jsonb
+  created_at timestamptz [not null, default: `now()`]
+  expires_at timestamptz [not null]
+  indexes {
+    (key, user_id) [pk, name: 'pk_idempotency_keys']
+    (expires_at) [name: 'ix_idempotency_keys_expires_at']
+  }
+  Note: 'Client-supplied idempotency keys for state-changing requests. Identical retries replay the stored response; a different request hash is a 409 conflict.'
+}
+Ref: idempotency_keys.user_id > users.id [delete: cascade]
