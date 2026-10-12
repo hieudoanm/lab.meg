@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MEG Lab — Landing</title>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','sans-serif'], mono: ['ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','monospace'] },
+  colors: {
+    background:'#0B0F14', surface:'#121821', surfaceMuted:'#1A2230', surfaceRaised:'#212B3A',
+    border:'#263244', borderStrong:'#35455C', textPrimary:'#E6EDF5', textSecondary:'#9BA9BC', textMuted:'#6B7A90',
+    accent:'#4C8DFF', accentHover:'#6BA1FF', accentMuted:'#1C3355',
+    success:'#3FB950', successMuted:'#16301F', warning:'#D9A441', warningMuted:'#33290F',
+    danger:'#F0554D', dangerMuted:'#3A1C1A', info:'#58A6FF', infoMuted:'#16283F', neutralState:'#5B6578'
+  }
+} } };
+</script>
+<style>
+  :root{color-scheme:dark}
+  html,body{background:#0B0F14}
+  body{font-feature-settings:'cv02','cv03','cv04','cv11'}
+  .focus-ring:focus-visible{outline:2px solid #7FB2FF;outline-offset:2px;border-radius:6px}
+  .card{background:#121821;border:1px solid #263244}
+  .table :where(th,td){border-color:#263244}
+  .table th{color:#9BA9BC;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .menu li>a{color:#9BA9BC}
+  .menu li>a:hover{background:#1A2230;color:#E6EDF5}
+  .signal-bg{background:#05080B}
+</style>
+</head>
+<body class="min-h-screen bg-background text-textPrimary antialiased font-sans text-[14px] leading-[22px]">
+
+  <header class="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
+    <div class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
+      <div class="flex items-center gap-2.5">
+        <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+        <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+      </div>
+      <nav class="hidden items-center gap-1 text-[13px] md:flex">
+        <a href="#view" class="focus-ring rounded-md px-3 py-2 text-textSecondary hover:text-textPrimary">Signals</a>
+        <a href="#analyse" class="focus-ring rounded-md px-3 py-2 text-textSecondary hover:text-textPrimary">Analyse</a>
+        <a href="#sensors" class="focus-ring rounded-md px-3 py-2 text-textSecondary hover:text-textPrimary">Sensors</a>
+        <a href="14-explore.html" class="focus-ring rounded-md px-3 py-2 text-textSecondary hover:text-textPrimary">Explore</a>
+        <a href="#" class="focus-ring rounded-md px-3 py-2 text-textSecondary hover:text-textPrimary">Docs</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <a href="02-sign-in.html" class="focus-ring inline-flex h-9 items-center rounded-md px-3 text-[13px] font-medium text-textSecondary hover:text-textPrimary">Sign in</a>
+        <a href="14-explore.html" class="focus-ring inline-flex h-9 items-center gap-2 rounded-md bg-accent px-3.5 text-[13px] font-semibold text-background hover:bg-accentHover">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+          Open sample recording
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="relative overflow-hidden border-b border-border">
+      <div class="pointer-events-none absolute -top-40 left-1/2 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-accentMuted opacity-40 blur-3xl"></div>
+      <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-[1.05fr_.95fr]">
+        <div>
+          <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surfaceMuted px-3 py-1 text-[12px] font-medium text-textSecondary">
+            <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+            Open-source · Research and educational tool
+          </div>
+          <h1 class="text-[40px] font-bold leading-[46px] tracking-tight md:text-[52px] md:leading-[58px]">
+            Go from a raw MEG recording to an interpretable, reproducible neural signal analysis in the cloud.
+          </h1>
+          <p class="mt-5 max-w-xl text-[16px] leading-7 text-textSecondary">
+            MEG Lab is a cloud electrophysiology workbench for magnetoencephalography: a responsive signal viewer, versioned analysis pipelines, explicit sensor geometry, and machine-readable experiment manifests. No server to configure, no analysis to reproduce by hand.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href="14-explore.html" class="focus-ring inline-flex h-11 items-center gap-2 rounded-md bg-accent px-5 text-[14px] font-semibold text-background hover:bg-accentHover">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg>
+              Explore the sample recording
+            </a>
+            <a href="02-sign-in.html" class="focus-ring inline-flex h-11 items-center gap-2 rounded-md border border-border bg-surfaceMuted px-5 text-[14px] font-medium text-textPrimary hover:bg-surfaceRaised">Sign in</a>
+          </div>
+          <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-textMuted">
+            <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5"><path d="m20 6-11 11-5-5"/></svg>SQUID-MEG + OPM-MEG</span>
+            <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5"><path d="m20 6-11 11-5-5"/></svg>MNE-Python powered</span>
+            <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5"><path d="m20 6-11 11-5-5"/></svg>SHA-256 provenance</span>
+          </div>
+        </div>
+
+        <div class="card rounded-xl p-3 shadow-[0_16px_48px_rgba(0,0,0,0.55)]">
+          <div class="flex items-center justify-between px-1 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-danger"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-warning"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-success"></span>
+              <span class="ml-2 text-[12px] text-textMuted">signal viewer — sample AEF / FIF</span>
+            </div>
+            <span class="rounded-full bg-successMuted px-2.5 py-0.5 text-[12px] font-medium text-success">validated</span>
+          </div>
+          <div class="signal-bg overflow-hidden rounded-lg border border-border">
+            <svg viewBox="0 0 640 400" class="block w-full" role="img" aria-label="Multichannel MEG signal preview with event markers and sensor layout">
+              <rect width="640" height="400" fill="#05080B"/>
+              <g stroke="#1A2230" stroke-width="1">
+                <line x1="0" y1="196" x2="640" y2="196"/>
+                <line x1="470" y1="196" x2="470" y2="400"/>
+                <line x1="0" y1="400" x2="640" y2="400"/>
+              </g>
+              <g font-family="monospace" font-size="11" fill="#6B7A90">
+                <rect x="18" y="18" width="608" height="432" rx="0" />
+                <text x="24" y="204" fill="#9BA9BC" font-family="monospace">CH</text>
+              </g>
+              <g stroke="#1A2230">
+                <line x1="46" y1="30" x2="46" y2="386"/>
+              </g>
+              <g fill="#2A3648">
+                <text x="52" y="172" font-family="monospace" font-size="10" fill="#6B7A90">MEG 011</text>
+                <text x="52" y="382" font-family="monospace" font-size="10" fill="#6B7A90">MEG 086</text>
+              </g>
+              <g fill="none" stroke-width="1.1">
+                <polyline points="50,60 80,62 110,58 140,64 170,60 200,70 230,66 260,72 290,68 320,78 350,74 380,80 410,76 440,84 470,80 500,88 530,84 560,92 590,88" stroke="#4C8DFF"/>
+                <polyline points="50,110 80,112 110,108 140,114 170,110 200,120 230,116 260,122 290,118 320,128 350,124 380,130 410,126 440,134 470,130 500,138 530,134 560,142 590,138" stroke="#4C8DFF"/>
+                <polyline points="50,160 80,162 110,158 140,164 170,160 200,170 230,166 260,172 290,168 320,178 350,174 380,180 410,176 440,184 470,180 500,188 530,184 560,192 590,188" stroke="#4C8DFF" opacity="0.6"/>
+                <polyline points="50,210 80,212 110,208 140,214 170,210 200,220 230,216 260,222 290,218 320,228 350,224 380,230 410,226 440,234 470,230 500,238 530,234 560,242 590,238" stroke="#58A6FF" opacity="0.55"/>
+                <polyline points="50,260 80,262 110,258 140,264 170,260 200,270 230,266 260,272 290,268 320,278 350,274 380,280 410,276 440,284 470,280 500,288 530,284 560,292 590,288" stroke="#4C8DFF" opacity="0.5"/>
+                <polyline points="50,310 80,312 110,308 140,314 170,310 200,320 230,316 260,322 290,318 320,328 350,324 380,330 410,326 440,334 470,330 500,338 530,334 560,342 590,338" stroke="#4C8DFF" opacity="0.45"/>
+                <polyline points="50,360 80,362 110,358 140,364 170,360 200,370 230,366 260,372 290,368 320,378 350,374 380,380 410,376 440,384 470,380 500,388 530,384 560,392 590,388" stroke="#4C8DFF" opacity="0.4"/>
+              </g>
+              <g stroke="#D9A441" stroke-width="1" stroke-dasharray="3 3">
+                <line x1="200" y1="28" x2="200" y2="392"/>
+                <text x="178" y="20" fill="#D9A441" font-family="monospace" font-size="10">STIM</text>
+                <line x1="350" y1="28" x2="350" y2="392"/>
+                <text x="332" y="20" fill="#D9A441" font-family="monospace" font-size="10">STIM2</text>
+                <line x1="470" y1="28" x2="470" y2="392"/>
+              </g>
+              <g>
+                <rect x="488" y="210" width="140" height="176" rx="4" fill="#0B0F14" stroke="#263244"/>
+                <text x="496" y="230" fill="#9BA9BC" font-family="monospace" font-size="10">SENSOR LAYOUT</text>
+                <g fill="#2A3648">
+                  <circle cx="514" cy="252" r="3"/><circle cx="532" cy="246" r="3"/><circle cx="550" cy="252" r="3"/>
+                  <circle cx="526" cy="268" r="3"/><circle cx="544" cy="268" r="3"/><circle cx="514" cy="284" r="3"/>
+                  <circle cx="532" cy="284" r="3"/><circle cx="550" cy="284" r="3"/><circle cx="526" cy="300" r="3"/>
+                  <circle cx="544" cy="300" r="3"/><circle cx="520" cy="316" r="3"/><circle cx="538" cy="316" r="3"/>
+                  <circle cx="556" cy="316" r="3"/><circle cx="526" cy="332" r="3"/><circle cx="544" cy="332" r="3"/>
+                  <circle cx="560" cy="268" r="3"/><circle cx="574" cy="284" r="3"/><circle cx="568" cy="316" r="3"/><circle cx="582" cy="300" r="3"/>
+                  <circle cx="508" cy="332" r="3"/><circle cx="588" cy="352" r="3"/><circle cx="570" cy="352" r="3"/><circle cx="552" cy="352" r="3"/>
+                  <circle cx="534" cy="352" r="3"/><circle cx="516" cy="352" r="3"/><circle cx="498" cy="352" r="3"/><circle cx="610" cy="332" r="3"/>
+                </g>
+                <g fill="#4C8DFF">
+                  <circle cx="514" cy="368" r="2.5"/><circle cx="610" cy="368" r="2.5"/><circle cx="562" cy="368" r="2.5"/>
+                </g>
+                <text x="496" y="382" fill="#6B7A90" font-family="monospace" font-size="9">102 mag · 204 grad</text>
+              </g>
+              <g font-family="monospace" font-size="11">
+                <text x="24" y="20" fill="#6B7A90">RECORDING</text>
+                <text x="24" y="392" fill="#6B7A90" font-size="10">-0.2 s</text>
+                <text x="300" y="392" fill="#6B7A90" font-size="10">1.0 s</text>
+                <text x="452" y="392" fill="#6B7A90" font-size="10">2.0 s</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view" class="mx-auto max-w-6xl px-4 py-16 md:px-6">
+      <div class="mb-10 max-w-2xl">
+        <div class="mb-2 text-[12px] font-semibold uppercase tracking-wider text-textMuted">Capabilities</div>
+        <h2 class="text-[28px] font-semibold leading-9 tracking-tight">Signals, sensors, and science on the same project and artifact system</h2>
+        <p class="mt-2 text-[14px] text-textSecondary">Display transforms are never recorded as analytical inputs. The recording is the primary content; everything else recedes.</p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="card rounded-lg p-6">
+          <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-accentMuted text-accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+          </div>
+          <h3 class="text-[18px] font-semibold">Signals</h3>
+          <p class="mt-2 text-[14px] text-textSecondary">A responsive multichannel viewer with channel grouping, time navigation, amplitude scaling, and event markers — plus filtering previews that never touch the stored recording.</p>
+          <ul class="mt-4 space-y-2 text-[13px] text-textSecondary">
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Channel browser with explicit types and units</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Event markers reconciled to a recorded time base</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Multiresolution summaries for fast navigation</li>
+          </ul>
+        </div>
+        <div id="analyse" class="card rounded-lg p-6">
+          <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-accentMuted text-accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3"/></svg>
+          </div>
+          <h3 class="text-[18px] font-semibold">Analyse</h3>
+          <p class="mt-2 text-[14px] text-textSecondary">Run versioned MNE-Python pipelines in isolated containers — filtering, epoching, evoked responses, spectral analysis — with explicit resource limits and honest status feedback.</p>
+          <ul class="mt-4 space-y-2 text-[13px] text-textSecondary">
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Immutable pipeline versions pinned by image digest</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Parameters rendered from a typed schema with units</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Streamed logs that never leak credentials or raw signals</li>
+          </ul>
+        </div>
+        <div id="sensors" class="card rounded-lg p-6">
+          <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-accentMuted text-accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg>
+          </div>
+          <h3 class="text-[18px] font-semibold">Sensors</h3>
+          <p class="mt-2 text-[14px] text-textSecondary">Inspect sensor positions, orientations, and coordinate frames in 3D — essential for OPM-MEG where sensor geometry is flexible and can vary between recordings.</p>
+          <ul class="mt-4 space-y-2 text-[13px] text-textSecondary">
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Declared coordinate frame and units for every layout</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Sensor type and channel mapping visible together</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>OPM movement metadata where tracking data exists</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-border bg-surface/40">
+      <div class="mx-auto max-w-6xl px-4 py-16 md:px-6">
+        <div class="mb-8 max-w-2xl">
+          <div class="mb-2 text-[12px] font-semibold uppercase tracking-wider text-textMuted">Start without uploading anything</div>
+          <h2 class="text-[28px] font-semibold leading-9 tracking-tight">Public sample project</h2>
+        </div>
+        <div class="card grid gap-6 rounded-xl p-6 md:grid-cols-[1fr_1.2fr]">
+          <div class="signal-bg overflow-hidden rounded-lg border border-border">
+            <svg viewBox="0 0 320 220" class="block w-full" role="img" aria-label="Sample MEG recording thumbnail">
+              <rect width="320" height="220" fill="#05080B"/>
+              <g stroke="#1A2230"><line x1="160" y1="0" x2="160" y2="220"/><line x1="0" y1="110" x2="320" y2="110"/></g>
+              <g fill="none" stroke="#4C8DFF" stroke-width="1.1">
+                <polyline points="18,60 58,64 98,58 138,66 178,60 218,74 258,66 300,80"/>
+                <polyline points="18,100 58,104 98,98 138,106 178,100 218,114 258,106 300,120"/>
+                <polyline points="18,140 58,144 98,138 138,146 178,140 218,154 258,146 300,160"/>
+                <polyline points="18,180 58,184 98,178 138,186 178,180 218,194 258,186 300,200"/>
+              </g>
+              <g stroke="#D9A441" stroke-dasharray="2 3">
+                <line x1="178" y1="30" x2="178" y2="192"/>
+              </g>
+              <text x="14" y="26" fill="#6B7A90" font-size="11" font-family="monospace">AEF-sample · FIF · Neuromag</text>
+            </svg>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="text-[18px] font-semibold">Sample Auditory Evoked Fields — FIF</h3>
+              <span class="inline-flex items-center gap-1 rounded-full bg-accentMuted px-2.5 py-0.5 text-[12px] font-medium text-accent">public sample</span>
+              <span class="inline-flex items-center gap-1 rounded-full bg-successMuted px-2.5 py-0.5 text-[12px] font-medium text-success"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>validated</span>
+            </div>
+            <p class="mt-3 text-[14px] text-textSecondary">
+              A short anonymised auditory evoked fields recording from the MNE sample data, with 306 MEG channels, two stimulus conditions, and a matching event file. Explore it read-only, then sign in to save a view or run an event-related analysis.
+            </p>
+            <dl class="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 text-[13px] sm:grid-cols-3">
+              <div><dt class="text-textMuted">Format</dt><dd class="mt-0.5 font-mono text-textPrimary">FIF</dd></div>
+              <div><dt class="text-textMuted">Duration</dt><dd class="mt-0.5 font-mono text-textPrimary">4 min</dd></div>
+              <div><dt class="text-textMuted">Sampling rate</dt><dd class="mt-0.5 font-mono text-textPrimary">1000 Hz</dd></div>
+              <div><dt class="text-textMuted">Channels</dt><dd class="mt-0.5 font-mono text-textPrimary">306 MEG + 9</dd></div>
+              <div><dt class="text-textMuted">System</dt><dd class="mt-0.5 font-mono text-textPrimary">Neuromag SQUID</dd></div>
+              <div><dt class="text-textMuted">Coordinate frame</dt><dd class="mt-0.5 font-mono text-textPrimary">head</dd></div>
+            </dl>
+            <div class="mt-5 rounded-md border border-border bg-surfaceMuted p-3 font-mono text-[12px] leading-5 text-textSecondary">
+              sha256:6f1c2a7b4e…a204e8c6b11f5d93
+            </div>
+            <p class="mt-4 text-[12px] leading-5 text-textMuted">
+              Source: MNE-Python sample data (BSD-3-Clause). Attribution is shown with the sample and is never hidden behind an interaction. Not for clinical use.
+            </p>
+            <div class="mt-5 flex flex-wrap gap-3">
+              <a href="14-explore.html" class="focus-ring inline-flex h-9 items-center gap-2 rounded-md bg-accent px-3.5 text-[13px] font-semibold text-background hover:bg-accentHover">Open sample recording</a>
+              <a href="#" class="focus-ring inline-flex h-9 items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3.5 text-[13px] font-medium text-textPrimary hover:bg-surfaceRaised">Read the citation</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-border">
+      <div class="mx-auto max-w-6xl px-4 py-16 md:px-6">
+        <div class="card flex flex-col items-start justify-between gap-6 rounded-xl bg-gradient-to-br from-surface to-accentMuted/40 p-8 md:flex-row md:items-center">
+          <div class="max-w-xl">
+            <h2 class="text-[22px] font-semibold leading-8">From “I found an MEG recording” to a shareable result</h2>
+            <p class="mt-2 text-[14px] text-textSecondary">Create a project, upload a supported recording, open the Signal Viewer, and run your first event-related analysis in minutes.</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href="02-sign-in.html" class="focus-ring inline-flex h-11 items-center gap-2 rounded-md bg-accent px-5 text-[14px] font-semibold text-background hover:bg-accentHover">Create an account</a>
+            <a href="14-explore.html" class="focus-ring inline-flex h-11 items-center gap-2 rounded-md border border-border bg-surfaceMuted px-5 text-[14px] font-medium text-textPrimary hover:bg-surfaceRaised">Open sample recording</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-border bg-surface/40">
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-4 md:px-6">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+          <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+        </div>
+        <p class="mt-3 max-w-xs text-[13px] text-textMuted">A cloud-based computational electrophysiology workbench for developers, computational neuroscientists, and neuroscience enthusiasts.</p>
+      </div>
+      <div>
+        <div class="text-[12px] font-semibold uppercase tracking-wider text-textMuted">Product</div>
+        <ul class="mt-3 space-y-2 text-[13px]">
+          <li><a href="#view" class="focus-ring text-textSecondary hover:text-textPrimary">Signal Viewer</a></li>
+          <li><a href="#analyse" class="focus-ring text-textSecondary hover:text-textPrimary">Pipelines</a></li>
+          <li><a href="#sensors" class="focus-ring text-textSecondary hover:text-textPrimary">Sensor Explorer</a></li>
+          <li><a href="14-explore.html" class="focus-ring text-textSecondary hover:text-textPrimary">Explore samples</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-[12px] font-semibold uppercase tracking-wider text-textMuted">Documentation</div>
+        <ul class="mt-3 space-y-2 text-[13px]">
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Getting started</a></li>
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Formats and BIDS MEG</a></li>
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">REST API</a></li>
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Python SDK</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-[12px] font-semibold uppercase tracking-wider text-textMuted">Legal</div>
+        <ul class="mt-3 space-y-2 text-[13px]">
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Licence</a></li>
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Privacy policy</a></li>
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Terms of use</a></li>
+          <li><a href="#" class="focus-ring text-textSecondary hover:text-textPrimary">Citation</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-border">
+      <div class="mx-auto flex max-w-6xl flex-col justify-between gap-2 px-4 py-5 text-[12px] text-textMuted md:flex-row md:px-6">
+        <span>© 2026 MEG Lab · Research and educational use only. Not a medical device.</span>
+        <span class="font-mono">v0.1.0 · prototype</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

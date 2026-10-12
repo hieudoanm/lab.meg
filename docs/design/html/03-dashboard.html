@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MEG Lab — Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','sans-serif'], mono: ['ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','monospace'] },
+  colors: {
+    background:'#0B0F14', surface:'#121821', surfaceMuted:'#1A2230', surfaceRaised:'#212B3A',
+    border:'#263244', borderStrong:'#35455C', textPrimary:'#E6EDF5', textSecondary:'#9BA9BC', textMuted:'#6B7A90',
+    accent:'#4C8DFF', accentHover:'#6BA1FF', accentMuted:'#1C3355',
+    success:'#3FB950', successMuted:'#16301F', warning:'#D9A441', warningMuted:'#33290F',
+    danger:'#F0554D', dangerMuted:'#3A1C1A', info:'#58A6FF', infoMuted:'#16283F', neutralState:'#5B6578'
+  }
+} } };
+</script>
+<style>
+  :root{color-scheme:dark}
+  html,body{background:#0B0F14}
+  body{font-feature-settings:'cv02','cv03','cv04','cv11'}
+  .focus-ring:focus-visible{outline:2px solid #7FB2FF;outline-offset:2px;border-radius:6px}
+  .card{background:#121821;border:1px solid #263244}
+  .table :where(th,td){border-color:#263244}
+  .table th{color:#9BA9BC;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .menu li>a{color:#9BA9BC}
+  .menu li>a:hover{background:#1A2230;color:#E6EDF5}
+</style>
+</head>
+<body class="min-h-screen bg-background text-textPrimary antialiased font-sans text-[14px] leading-[22px]">
+  <div class="flex min-h-screen">
+    <aside class="hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
+      <div class="flex h-14 items-center gap-2.5 border-b border-border px-4">
+        <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+        <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+      </div>
+      <nav class="flex-1 space-y-0.5 overflow-y-auto p-2 text-sm">
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 bg-accentMuted font-medium text-textPrimary"><svg class="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+        <a href="04-projects.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>Projects</a>
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Datasets</a>
+        <a href="08-viewer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Signal Viewer</a>
+        <a href="09-sensor-explorer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg>Sensor Explorer</a>
+        <a href="10-pipelines.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3"/></svg>Pipelines</a>
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-3 3 3 3"/><path d="m16 9 3 3-3 3"/><path d="m13 5-2 14"/></svg>Notebooks</a>
+        <a href="14-explore.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg>Explore</a>
+        <a href="15-settings.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8L9.4 5.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg>Settings</a>
+      </nav>
+      <div class="border-t border-border px-4 py-3 text-[11px] text-textMuted">v0.1.0 · prototype</div>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="sticky top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-border bg-surface px-4 md:px-6">
+        <div class="flex min-w-0 items-center gap-3">
+          <button class="focus-ring flex items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3 py-1.5 text-[13px]"><span class="text-textMuted">Project</span><span class="font-medium">Auditory Evoked Fields</span><span class="rounded bg-accentMuted px-1.5 text-[11px] text-accent">private</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-3.5 w-3.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="hidden items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3 py-1.5 text-[13px] text-textMuted lg:flex">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" class="h-4 w-4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span>Search recordings, runs…</span>
+            <kbd class="ml-8 rounded border border-border px-1.5 text-[11px]">⌘K</kbd>
+          </div>
+          <button class="focus-ring relative flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surfaceMuted text-textSecondary hover:text-textPrimary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent"></span>
+          </button>
+          <div class="flex items-center gap-2 rounded-md border border-border bg-surfaceMuted py-1 pl-1 pr-2">
+            <div class="flex h-6 w-6 items-center justify-center rounded-md bg-accentMuted text-[11px] font-semibold text-accent">HD</div>
+            <span class="hidden text-[13px] text-textSecondary sm:inline">Hieu Doan</span>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 px-4 py-6 md:px-6">
+
+        <div class="mb-6 flex flex-wrap items-end justify-between gap-4"><div>
+          <div class="mb-1 text-[12px] font-semibold uppercase tracking-wider text-textMuted">Workspace overview</div>
+          <h1 class="text-[28px] font-semibold leading-9 tracking-tight">Welcome back, Hieu</h1>
+          <p class="mt-1 max-w-2xl text-[14px] text-textSecondary">Activity across your projects. Active project: <span class="text-textPrimary">Auditory Evoked Fields</span> · last run 12 minutes ago.</p>
+        </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button class="focus-ring inline-flex h-9 items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3.5 text-[13px] font-medium text-textPrimary hover:bg-surfaceRaised">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 21h14"/></svg>
+              Upload recording
+            </button>
+            <button class="focus-ring inline-flex h-9 items-center gap-2 rounded-md bg-accent px-3.5 text-[13px] font-semibold text-background hover:bg-accentHover">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 5v14M5 12h14"/></svg>
+              New project
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div class="card rounded-lg p-4"><div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Projects</div><div class="mt-2 text-[24px] font-semibold">5</div><div class="mt-1 text-[12px] text-textSecondary">4 active · 1 archived</div></div>
+          <div class="card rounded-lg p-4"><div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Recordings</div><div class="mt-2 text-[24px] font-semibold">12</div><div class="mt-1 text-[12px] text-textSecondary">10 ready · 2 validating</div></div>
+          <div class="card rounded-lg p-4"><div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Storage used</div><div class="mt-2 text-[24px] font-semibold">31.8 GB</div><div class="mt-1 text-[12px] text-textSecondary">of 100 GB quota</div></div>
+          <div class="card rounded-lg p-4"><div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Runs this week</div><div class="mt-2 text-[24px] font-semibold">23</div><div class="mt-1 text-[12px] text-textSecondary">20 succeeded · 2 running · 1 failed</div></div>
+        </div>
+
+        <div class="mt-6 grid gap-6 xl:grid-cols-[1.7fr_1fr]">
+          <section class="card rounded-lg">
+            <div class="flex items-center justify-between border-b border-border px-4 py-3">
+              <div>
+                <h2 class="text-[15px] font-semibold">Recent runs</h2>
+                <p class="text-[12px] text-textMuted">Pipeline executions across your projects</p>
+              </div>
+              <a href="13-experiments.html" class="focus-ring text-[13px] font-medium text-accent hover:text-accentHover">View all</a>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <thead>
+                  <tr><th>Run</th><th>Pipeline</th><th>Recording</th><th>Status</th><th class="text-right">Submitted</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="font-mono text-[12px] text-textSecondary">run_4ad8…2b31</td>
+                    <td class="text-[13px]">event-related-analysis <span class="text-textMuted">v1.2.0</span></td>
+                    <td class="font-mono text-[12px] text-textSecondary">AEF-001 · v3</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-medium bg-infoMuted text-info"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>running</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">2 min ago</td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono text-[12px] text-textSecondary">run_9f3c…1b7a</td>
+                    <td class="text-[13px]">spectral-analysis <span class="text-textMuted">v0.9.3</span></td>
+                    <td class="font-mono text-[12px] text-textSecondary">AEF-001 · v3</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-medium bg-successMuted text-success"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>succeeded</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">34 min ago</td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono text-[12px] text-textSecondary">run_2ee5…10ab</td>
+                    <td class="text-[13px]">opm-preprocess <span class="text-textMuted">v0.4.0</span></td>
+                    <td class="font-mono text-[12px] text-textSecondary">OPM-SSS-011 · v1</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-medium bg-successMuted text-success"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>succeeded</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">1 h ago</td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono text-[12px] text-textSecondary">run_c1e7…77da</td>
+                    <td class="text-[13px]">bad-channel-detection <span class="text-textMuted">v1.1.0</span></td>
+                    <td class="font-mono text-[12px] text-textSecondary">AEF-001 · v2</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-medium bg-dangerMuted text-danger"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>failed</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">3 h ago</td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono text-[12px] text-textSecondary">run_55aa…9c30</td>
+                    <td class="text-[13px]">event-related-analysis <span class="text-textMuted">v1.2.0</span></td>
+                    <td class="font-mono text-[12px] text-textSecondary">OPM-SSS-011 · v1</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-medium bg-surfaceMuted text-textSecondary"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>queued</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">4 h ago</td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono text-[12px] text-textSecondary">run_e081…27bb</td>
+                    <td class="text-[13px]">ssp-artifact-removal <span class="text-textMuted">v0.3.0</span></td>
+                    <td class="font-mono text-[12px] text-textSecondary">AEF-002 · v1</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-medium bg-surfaceMuted text-textMuted"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>cancelled</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">Yesterday</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <div class="space-y-6">
+            <section class="card rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-[15px] font-semibold">Storage quota</h2>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-warningMuted px-2.5 py-0.5 text-[12px] font-medium text-warning"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>approaching limit</span>
+              </div>
+              <div class="mt-4 flex items-baseline justify-between text-[13px]">
+                <span class="font-mono text-textPrimary">31.8 GB</span>
+                <span class="text-textMuted">of 100 GB quota</span>
+              </div>
+              <progress class="progress mt-2 h-1.5 w-full" value="32" max="100"></progress>
+              <p class="mt-2 text-[12px] text-textSecondary">68.2 GB remaining. Archive old OPM recordings in <span class="text-textPrimary">OPM Pilot Study</span> to free space.</p>
+            </section>
+
+            <section class="card rounded-lg p-4">
+              <h2 class="text-[15px] font-semibold">Compute this week</h2>
+              <div class="mt-4 space-y-3 text-[13px]">
+                <div class="flex items-center justify-between"><span class="text-textSecondary">CPU time</span><span class="font-mono">6 h 41 m</span></div>
+                <div class="flex items-center justify-between"><span class="text-textSecondary">Peak memory</span><span class="font-mono">7.2 GiB</span></div>
+                <div class="flex items-center justify-between"><span class="text-textSecondary">Avg. run duration</span><span class="font-mono">14 m 22 s</span></div>
+                <div class="flex items-center justify-between"><span class="text-textSecondary">Success rate</span><span class="font-mono text-success">87.0%</span></div>
+              </div>
+              <progress class="progress mt-4 h-1.5 w-full" value="28" max="100"></progress>
+              <p class="mt-2 text-[12px] text-textMuted">Compute usage within quota for the current cycle.</p>
+            </section>
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-6 xl:grid-cols-[1.7fr_1fr]">
+          <section class="card rounded-lg">
+            <div class="flex items-center justify-between border-b border-border px-4 py-3">
+              <div>
+                <h2 class="text-[15px] font-semibold">Recent projects</h2>
+                <p class="text-[12px] text-textMuted">Recordings, runs, and last activity</p>
+              </div>
+              <a href="04-projects.html" class="focus-ring text-[13px] font-medium text-accent hover:text-accentHover">All projects</a>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <thead>
+                  <tr><th>Project</th><th class="text-right">Datasets</th><th class="text-right">Runs</th><th>Visibility</th><th class="text-right">Updated</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="flex items-center gap-2"><div class="flex h-6 w-6 items-center justify-center rounded bg-accentMuted text-[11px] font-semibold text-accent">AE</div><span class="text-[13px] font-medium">Auditory Evoked Fields</span></div>
+                    </td>
+                    <td class="text-right font-mono text-[12px]">4</td>
+                    <td class="text-right font-mono text-[12px]">9</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full bg-surfaceMuted px-2.5 py-0.5 text-[12px] font-medium text-textSecondary">private</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">12 min ago</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="flex items-center gap-2"><div class="flex h-6 w-6 items-center justify-center rounded bg-accentMuted text-[11px] font-semibold text-accent">OP</div><span class="text-[13px] font-medium">OPM Pilot Study</span></div>
+                    </td>
+                    <td class="text-right font-mono text-[12px]">5</td>
+                    <td class="text-right font-mono text-[12px]">8</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full bg-surfaceMuted px-2.5 py-0.5 text-[12px] font-medium text-textSecondary">private</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">5 h ago</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="flex items-center gap-2"><div class="flex h-6 w-6 items-center justify-center rounded bg-accentMuted text-[11px] font-semibold text-accent">MP</div><span class="text-[13px] font-medium">MNE Sample Tutorials</span></div>
+                    </td>
+                    <td class="text-right font-mono text-[12px]">2</td>
+                    <td class="text-right font-mono text-[12px]">6</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full bg-infoMuted px-2.5 py-0.5 text-[12px] font-medium text-info">public sample</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">Yesterday</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="flex items-center gap-2"><div class="flex h-6 w-6 items-center justify-center rounded bg-surfaceMuted text-[11px] font-semibold text-textMuted">CO</div><span class="text-[13px] font-medium text-textMuted">Cognitive Decline (archived)</span></div>
+                    </td>
+                    <td class="text-right font-mono text-[12px]">1</td>
+                    <td class="text-right font-mono text-[12px]">3</td>
+                    <td><span class="inline-flex items-center gap-1.5 rounded-full bg-surfaceMuted px-2.5 py-0.5 text-[12px] font-medium text-textMuted">archived</span></td>
+                    <td class="text-right font-mono text-[12px] text-textMuted">3 weeks ago</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card rounded-lg p-4">
+            <h2 class="text-[15px] font-semibold">Quick actions</h2>
+            <div class="mt-4 grid gap-2">
+              <a href="06-dataset-upload.html" class="focus-ring flex items-center gap-3 rounded-md border border-border bg-surfaceMuted px-3 py-2.5 text-[13px] font-medium hover:bg-surfaceRaised">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-accent"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Upload a recording
+              </a>
+              <a href="08-viewer.html" class="focus-ring flex items-center gap-3 rounded-md border border-border bg-surfaceMuted px-3 py-2.5 text-[13px] font-medium hover:bg-surfaceRaised">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-accent"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Open the Signal Viewer
+              </a>
+              <a href="09-sensor-explorer.html" class="focus-ring flex items-center gap-3 rounded-md border border-border bg-surfaceMuted px-3 py-2.5 text-[13px] font-medium hover:bg-surfaceRaised">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-accent"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg>Inspect sensor geometry
+              </a>
+              <a href="11-run-new.html" class="focus-ring flex items-center gap-3 rounded-md border border-border bg-surfaceMuted px-3 py-2.5 text-[13px] font-medium hover:bg-surfaceRaised">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-accent"><path d="m5 3 14 9-14 9Z"/></svg>Start a run
+              </a>
+              <a href="14-explore.html" class="focus-ring flex items-center gap-3 rounded-md border border-border bg-surfaceMuted px-3 py-2.5 text-[13px] font-medium hover:bg-surfaceRaised">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-accent"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg>Open the public sample
+              </a>
+            </div>
+          </section>
+        </div>
+
+        <section class="card mt-6 rounded-lg p-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[15px] font-semibold">Recent experiment activity</h2>
+            <span class="text-[12px] text-textMuted">Last 7 days</span>
+          </div>
+          <ol class="mt-4 space-y-4">
+            <li class="flex gap-3">
+              <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-success"></span>
+              <div>
+                <p class="text-[13px]"><span class="font-medium">run_9f3c…1b7a</span> succeeded — <span class="font-mono text-[12px] text-textSecondary">spectral-analysis v0.9.3</span> on AEF-001 v3</p>
+                <p class="text-[12px] text-textMuted">Produced <span class="font-mono">psd_traces.txt</span> · sha256:7ab2…f013 · 34 min ago</p>
+              </div>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-success"></span>
+              <div>
+                <p class="text-[13px]"><span class="font-medium">OPM-SSS-011</span> recording version <span class="font-mono text-[12px] text-textSecondary">v1</span> validated and marked ready</p>
+                <p class="text-[12px] text-textMuted">64-ch OPM · 1000 Hz · UCL FIL OPM · sha256:c4f6…81d2 · 2 h ago</p>
+              </div>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-danger"></span>
+              <div>
+                <p class="text-[13px]"><span class="font-medium">run_c1e7…77da</span> failed — <span class="font-mono text-[12px] text-textSecondary">bad-channel-detection v1.1.0</span></p>
+                <p class="text-[12px] text-textMuted">Safe reason: insufficient clean segments after rejection. 3 h ago</p>
+              </div>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+              <div>
+                <p class="text-[13px]"><span class="font-medium">MNE Sample Tutorials</span> project shared with a scoped read-only link</p>
+                <p class="text-[12px] text-textMuted">Expires in 14 days · viewed 6 times · Yesterday</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MEG Lab — Upload dataset</title>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','sans-serif'], mono: ['ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','monospace'] },
+  colors: {
+    background:'#0B0F14', surface:'#121821', surfaceMuted:'#1A2230', surfaceRaised:'#212B3A',
+    border:'#263244', borderStrong:'#35455C', textPrimary:'#E6EDF5', textSecondary:'#9BA9BC', textMuted:'#6B7A90',
+    accent:'#4C8DFF', accentHover:'#6BA1FF', accentMuted:'#1C3355',
+    success:'#3FB950', successMuted:'#16301F', warning:'#D9A441', warningMuted:'#33290F',
+    danger:'#F0554D', dangerMuted:'#3A1C1A', info:'#58A6FF', infoMuted:'#16283F', neutralState:'#5B6578'
+  }
+} } };
+</script>
+<style>
+  :root{color-scheme:dark}
+  html,body{background:#0B0F14}
+  body{font-feature-settings:'cv02','cv03','cv04','cv11'}
+  .focus-ring:focus-visible{outline:2px solid #7FB2FF;outline-offset:2px;border-radius:6px}
+  .card{background:#121821;border:1px solid #263244}
+  .table :where(th,td){border-color:#263244}
+  .table th{color:#9BA9BC;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .menu li>a{color:#9BA9BC}
+  .menu li>a:hover{background:#1A2230;color:#E6EDF5}
+</style>
+</head>
+<body class="min-h-screen bg-background text-textPrimary antialiased font-sans text-[14px] leading-[22px]">
+  <div class="flex min-h-screen">
+    <aside class="hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
+      <div class="flex h-14 items-center gap-2.5 border-b border-border px-4">
+        <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+        <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+      </div>
+      <nav class="flex-1 space-y-0.5 overflow-y-auto p-2 text-sm">
+        <a href="03-dashboard.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+        <a href="04-projects.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>Projects</a>
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 bg-accentMuted font-medium text-textPrimary"><svg class="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Datasets</a>
+        <a href="08-viewer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Signal Viewer</a>
+        <a href="09-sensor-explorer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg>Sensor Explorer</a>
+        <a href="10-pipelines.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3"/></svg>Pipelines</a>
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-3 3 3 3"/><path d="m16 9 3 3-3 3"/><path d="m13 5-2 14"/></svg>Notebooks</a>
+        <a href="14-explore.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg>Explore</a>
+        <a href="15-settings.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8L9.4 5.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg>Settings</a>
+      </nav>
+      <div class="border-t border-border px-4 py-3 text-[11px] text-textMuted">v0.1.0 · prototype</div>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="sticky top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-border bg-surface px-4 md:px-6">
+        <div class="flex min-w-0 items-center gap-3">
+          <nav class="hidden items-center gap-1.5 text-[13px] text-textMuted lg:flex">
+            <a href="#" class="hover:text-textPrimary">Datasets</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-3.5 w-3.5"><path d="m9 6 6 6-6 6"/></svg>
+            <span class="font-medium text-textPrimary">Upload</span>
+          </nav>
+          <button class="focus-ring flex items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3 py-1.5 text-[13px]"><span class="text-textMuted">Project</span><span class="font-medium">Auditory Evoked Fields</span><span class="rounded bg-accentMuted px-1.5 text-[11px] text-accent">private</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-3.5 w-3.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="hidden items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3 py-1.5 text-[13px] text-textMuted lg:flex">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" class="h-4 w-4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span>Search recordings, runs…</span>
+            <kbd class="ml-8 rounded border border-border px-1.5 text-[11px]">⌘K</kbd>
+          </div>
+          <button class="focus-ring relative flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surfaceMuted text-textSecondary hover:text-textPrimary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent"></span>
+          </button>
+          <div class="flex items-center gap-2 rounded-md border border-border bg-surfaceMuted py-1 pl-1 pr-2">
+            <div class="flex h-6 w-6 items-center justify-center rounded-md bg-accentMuted text-[11px] font-semibold text-accent">HD</div>
+            <span class="hidden text-[13px] text-textSecondary sm:inline">Hieu Doan</span>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 px-4 py-6 md:px-6">
+
+        <div class="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <div class="mb-1 text-[12px] font-semibold uppercase tracking-wider text-textMuted">Datasets</div>
+            <h1 class="text-[28px] font-semibold leading-9 tracking-tight">Upload dataset</h1>
+            <p class="mt-1 max-w-2xl text-[14px] text-textSecondary">Upload a Neuromag FIF recording (<span class="font-mono">.fif</span> or <span class="font-mono">.fif.gz</span>). The server validates the FIF header, channel layout, coordinate frame, and checksum before the dataset becomes <span class="text-textPrimary">ready</span>.</p>
+          </div>
+          <button class="focus-ring inline-flex h-9 items-center gap-2 rounded-md px-3 text-[13px] font-medium text-textSecondary hover:text-textPrimary">Cancel</button>
+        </div>
+
+        <div class="mb-6 flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-successMuted text-success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-3.5 w-3.5"><path d="m5 12 4 4 10-10"/></svg></span>
+            <span class="text-[13px] font-medium text-textPrimary">1 · Select files</span>
+          </div>
+          <span class="h-px w-10 bg-borderStrong"></span>
+          <div class="flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-successMuted text-success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-3.5 w-3.5"><path d="m5 12 4 4 10-10"/></svg></span>
+            <span class="text-[13px] font-medium text-textPrimary">2 · Validate</span>
+          </div>
+          <span class="h-px w-10 bg-borderStrong"></span>
+          <div class="flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-accent text-[12px] font-semibold text-accent">3</span>
+            <span class="text-[13px] font-medium text-accent">3 · Confirm &amp; upload</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+          <div class="space-y-6 xl:col-span-2">
+
+            <div class="card rounded-lg">
+              <div class="flex items-center justify-between border-b border-border px-4 py-3">
+                <h2 class="text-[15px] font-semibold">1 · Select files</h2>
+                <span class="text-[12px] text-textMuted">Limit 4 GB per file</span>
+              </div>
+              <div class="p-4">
+                <div class="focus-ring flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-borderStrong bg-surfaceMuted/40 px-6 py-10 text-center">
+                  <div class="flex h-11 w-11 items-center justify-center rounded-full bg-accentMuted text-accent">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/></svg>
+                  </div>
+                  <p class="mt-3 text-[14px] font-medium">Drag and drop FIF recordings here</p>
+                  <p class="mt-1 text-[13px] text-textSecondary">Supported: <span class="font-mono">.fif</span>, <span class="font-mono">.fif.gz</span></p>
+                  <button class="focus-ring mt-4 inline-flex h-9 items-center gap-2 rounded-md border border-border bg-surfaceRaised px-3.5 text-[13px] font-medium text-textPrimary hover:bg-surfaceMuted">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/></svg>
+                    Choose files
+                  </button>
+                </div>
+
+                <div class="mt-4 space-y-2">
+                  <div class="flex items-center justify-between gap-4 rounded-md border border-border bg-surfaceMuted px-3 py-2.5">
+                    <div class="flex min-w-0 items-center gap-3">
+                      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-successMuted text-success">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4"><path d="m5 12 4 4 10-10"/></svg>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="truncate font-mono text-[13px] text-textPrimary">AEF-003_auditory.fif</div>
+                        <div class="text-[12px] text-textMuted">186.4 MB · uploaded</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span class="text-[12px] font-medium text-success">100%</span>
+                      <button class="focus-ring rounded px-1.5 py-1 text-textMuted hover:text-textPrimary" aria-label="Remove file">✕</button>
+                    </div>
+                  </div>
+
+                  <div class="rounded-md border border-border bg-surfaceMuted px-3 py-2.5">
+                    <div class="flex items-center justify-between gap-4">
+                      <div class="flex min-w-0 items-center gap-3">
+                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accentMuted text-accent">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M14 3v5h5"/><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/></svg>
+                        </div>
+                        <div class="min-w-0">
+                          <div class="truncate font-mono text-[13px] text-textPrimary">AEF-003_events.fif</div>
+                          <div class="text-[12px] text-textMuted">1.2 MB · resumable</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-3">
+                        <span class="text-[12px] font-medium text-accent">41%</span>
+                        <button class="focus-ring rounded px-1.5 py-1 text-textMuted hover:text-textPrimary" aria-label="Remove file">✕</button>
+                      </div>
+                    </div>
+                    <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surfaceRaised">
+                      <div class="h-full rounded-full bg-accent" style="width:41%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card rounded-lg">
+              <div class="flex items-center justify-between border-b border-border px-4 py-3">
+                <h2 class="text-[15px] font-semibold">2 · FIF validation report</h2>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-successMuted px-2.5 py-0.5 text-[12px] font-medium text-success"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>validated</span>
+              </div>
+              <div class="p-4">
+                <div class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Format</div>
+                    <div class="mt-1 font-mono text-[13px]">Neuromag FIF · 1060 (20600s)</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Integrity · SHA-256</div>
+                    <div class="mt-1 flex items-center gap-2">
+                      <span class="font-mono text-[12px] text-textSecondary">sha256:2ee510ab41d0e8c25b6a…</span>
+                      <button class="focus-ring rounded px-1.5 py-0.5 text-textMuted hover:text-textPrimary" aria-label="Copy checksum">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Header</div>
+                    <div class="mt-1 font-mono text-[13px]">parseable · tags 0..3260 complete</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Sampling rate</div>
+                    <div class="mt-1 font-mono text-[13px]">1000.0 Hz · decimated source 1000.0</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Channels</div>
+                    <div class="mt-1 font-mono text-[13px]">315 · 306 SQUID + 9 aux</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Duration</div>
+                    <div class="mt-1 font-mono text-[13px]">240.0 s · 240,000 samples</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Device</div>
+                    <div class="mt-1 font-mono text-[13px]">Neuromag Vectorview · SQUID</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Coordinate frame</div>
+                    <div class="mt-1 font-mono text-[13px]">head · fif (dev.hpts resolved)</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Digitisation</div>
+                    <div class="mt-1 font-mono text-[13px]">84 points · fiducials nasion, lpa, rpa</div>
+                  </div>
+                  <div>
+                    <div class="text-[12px] font-medium uppercase tracking-wide text-textMuted">Resource limits</div>
+                    <div class="mt-1 font-mono text-[13px]">decoded 186.4 MB raw · within bounds</div>
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <div class="mb-1.5 text-[12px] font-medium uppercase tracking-wide text-textMuted">Device-to-head transform (dev → head)</div>
+                  <pre class="overflow-x-auto rounded-md border border-border bg-background px-4 py-3 font-mono text-[12px] leading-5 text-textSecondary">[ 0.9880  -0.0543   0.1438   -0.0021]
+[ 0.0504   0.9985   0.0197   -0.0064]
+[-0.1448  -0.0128   0.9894    0.0412]
+[ 0.0000   0.0000   0.0000    1.0000]</pre>
+                  <p class="mt-1.5 text-[12px] text-textMuted">Orthonormal (det 1.0) · fiducial RMS residual 0.8 mm · acceptable</p>
+                </div>
+
+                <div class="mt-4 flex items-start gap-3 rounded-md border border-warning/40 bg-warningMuted px-3 py-2.5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 h-4 w-4 shrink-0 text-warning"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 4.3 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg>
+                  <div>
+                    <p class="text-[13px] font-medium text-warning">1 warning</p>
+                    <p class="mt-0.5 text-[13px] text-textSecondary">2 channel positions fall outside the cortical surface by more than 15 mm. Accepted for SQUID reference sensors; review in <span class="text-textPrimary">Sensor Explorer</span>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card rounded-lg">
+              <div class="border-b border-border px-4 py-3">
+                <h2 class="text-[15px] font-semibold">3 · Confirm metadata</h2>
+              </div>
+              <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label class="mb-1.5 block text-[13px] font-medium text-textSecondary">Dataset name <span class="text-danger">*</span></label>
+                  <input class="focus-ring h-9 w-full rounded-md border border-border bg-surfaceMuted px-3 text-[13px] text-textPrimary placeholder:text-textMuted" value="AEF-003" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-[13px] font-medium text-textSecondary">Acquisition system</label>
+                  <select class="focus-ring h-9 w-full rounded-md border border-border bg-surfaceMuted px-3 text-[13px] text-textPrimary">
+                    <option>Neuromag Vectorview · SQUID</option>
+                    <option>CTF MEG · SQUID</option>
+                    <option>UCL FIL OPM · Optically-pumped</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-[13px] font-medium text-textSecondary">Stimulus / task</label>
+                  <input class="focus-ring h-9 w-full rounded-md border border-border bg-surfaceMuted px-3 text-[13px] text-textPrimary" value="Auditory oddball (40 dB HL · 1 kHz)" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-[13px] font-medium text-textSecondary">Subject identifier (anonymised)</label>
+                  <input class="focus-ring h-9 w-full rounded-md border border-border bg-surfaceMuted px-3 font-mono text-[13px] text-textPrimary" value="sub-AEF03" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-[13px] font-medium text-textSecondary">Recorded at</label>
+                  <input class="focus-ring h-9 w-full rounded-md border border-border bg-surfaceMuted px-3 text-[13px] text-textPrimary" value="MEG Lab · room M2 · 2026-09-14" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="mb-1.5 block text-[13px] font-medium text-textSecondary">Description</label>
+                  <textarea rows="3" class="focus-ring w-full rounded-md border border-border bg-surfaceMuted px-3 py-2 text-[13px] text-textPrimary placeholder:text-textMuted"></textarea>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="space-y-6">
+            <div class="card rounded-lg p-4">
+              <h2 class="text-[15px] font-semibold">Uploading to project</h2>
+              <div class="mt-3 flex items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3 py-2">
+                <div class="flex h-6 w-6 items-center justify-center rounded bg-accentMuted text-[11px] font-semibold text-accent">AE</div>
+                <span class="text-[13px] font-medium">Auditory Evoked Fields</span>
+                <span class="rounded bg-accentMuted px-1.5 text-[11px] text-accent">private</span>
+              </div>
+              <p class="mt-3 text-[13px] text-textSecondary">The dataset will be added to this project and visible to all <span class="text-textPrimary">3</span> members with editor access or above.</p>
+            </div>
+
+            <div class="card rounded-lg p-4">
+              <h2 class="text-[15px] font-semibold">Expectations</h2>
+              <ul class="mt-3 space-y-2.5 text-[13px] text-textSecondary">
+                <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Validation runs on the main file; satellite files (events, head positions) are linked automatically.</li>
+                <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Defaults to <span class="font-mono">head</span> coordinate frame with fiducial check.</li>
+                <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>You can launch a run as soon as the dataset is <span class="text-textPrimary">ready</span>.</li>
+              </ul>
+            </div>
+
+            <div class="card rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-[15px] font-semibold">Estimated storage</h2>
+                <span class="font-mono text-[13px] text-textSecondary">187.6 MB</span>
+              </div>
+              <div class="mt-1 text-[13px] text-textSecondary">After gzipped storage + derived artifacts</div>
+              <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-surfaceRaised">
+                <div class="h-full rounded-full bg-accent" style="width:1.9%"></div>
+              </div>
+              <p class="mt-2 text-[12px] text-textMuted">14.2 GB used of 100 GB quota</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end gap-3">
+          <button class="focus-ring inline-flex h-9 items-center rounded-md border border-border bg-surfaceMuted px-3.5 text-[13px] font-medium text-textPrimary hover:bg-surfaceRaised">Back</button>
+          <button class="focus-ring inline-flex h-9 items-center gap-2 rounded-md bg-accent px-3.5 text-[13px] font-semibold text-background hover:bg-accentHover">
+            Confirm &amp; upload
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</body>
+</html>

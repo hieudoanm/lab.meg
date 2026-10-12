@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MEG Lab — Explore</title>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','sans-serif'], mono: ['ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','monospace'] },
+  colors: {
+    background:'#0B0F14', surface:'#121821', surfaceMuted:'#1A2230', surfaceRaised:'#212B3A',
+    border:'#263244', borderStrong:'#35455C', textPrimary:'#E6EDF5', textSecondary:'#9BA9BC', textMuted:'#6B7A90',
+    accent:'#4C8DFF', accentHover:'#6BA1FF', accentMuted:'#1C3355',
+    success:'#3FB950', successMuted:'#16301F', warning:'#D9A441', warningMuted:'#33290F',
+    danger:'#F0554D', dangerMuted:'#3A1C1A', info:'#58A6FF', infoMuted:'#16283F', neutralState:'#5B6578'
+  }
+} } };
+</script>
+<style>
+  :root{color-scheme:dark}
+  html,body{background:#0B0F14}
+  body{font-feature-settings:'cv02','cv03','cv04','cv11'}
+  .focus-ring:focus-visible{outline:2px solid #7FB2FF;outline-offset:2px;border-radius:6px}
+  .card{background:#121821;border:1px solid #263244}
+</style>
+</head>
+<body class="min-h-screen bg-background text-textPrimary antialiased font-sans text-[14px] leading-[22px]">
+  <div class="flex min-h-screen">
+    <aside class="hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
+      <div class="flex h-14 items-center gap-2.5 border-b border-border px-4">
+        <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+        <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+      </div>
+      <nav class="flex-1 space-y-0.5 overflow-y-auto p-2 text-sm">
+        <a href="03-dashboard.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+        <a href="04-projects.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>Projects</a>
+        <a href="07-dataset-detail.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Datasets</a>
+        <a href="08-viewer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Signal Viewer</a>
+        <a href="09-sensor-explorer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg>Sensor Explorer</a>
+        <a href="10-pipelines.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3"/></svg>Pipelines</a>
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-3 3 3 3"/><path d="m16 9 3 3-3 3"/><path d="m13 5-2 14"/></svg>Notebooks</a>
+        <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 bg-accentMuted font-medium text-textPrimary"><svg class="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg>Explore</a>
+        <a href="15-settings.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8L9.4 5.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg>Settings</a>
+      </nav>
+      <div class="border-t border-border px-4 py-3 text-[11px] text-textMuted">v0.1.0 · prototype</div>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="sticky top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-border bg-surface px-4 md:px-6">
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="hidden items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3 py-1.5 text-[13px] text-textMuted lg:flex">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" class="h-4 w-4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span>Search public samples…</span>
+            <kbd class="ml-8 rounded border border-border px-1.5 text-[11px]">⌘K</kbd>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="focus-ring relative flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surfaceMuted text-textSecondary hover:text-textPrimary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent"></span>
+          </button>
+          <div class="flex items-center gap-2 rounded-md border border-border bg-surfaceMuted py-1 pl-1 pr-2">
+            <div class="flex h-6 w-6 items-center justify-center rounded-md bg-accentMuted text-[11px] font-semibold text-accent">HD</div>
+            <span class="hidden text-[13px] text-textSecondary sm:inline">Hieu Doan</span>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 px-4 py-6 md:px-6">
+
+        <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <div class="mb-1 text-[12px] font-semibold uppercase tracking-wider text-textMuted">EXPLORE</div>
+            <h1 class="text-[28px] font-semibold leading-9 tracking-tight">Public sample recordings</h1>
+            <p class="mt-1 max-w-2xl text-[14px] text-textSecondary">Copy-on-open public MEG datasets with visible licences and citations. Open them as read-only projects; runs you launch on them are charged to your compute quota.</p>
+          </div>
+        </div>
+
+        <div class="mb-6 card rounded-lg p-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-2 rounded-md border border-border bg-surfaceMuted px-2 py-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" class="h-4 w-4 text-textMuted"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input class="h-7 w-56 bg-transparent text-[13px] text-textPrimary placeholder:text-textMuted focus:outline-none" placeholder="Search samples by name…" />
+            </div>
+            <select class="focus-ring h-8 rounded-md border border-border bg-surfaceMuted px-2 text-[13px] text-textPrimary"><option>System: all</option><option>SQUID-MEG</option><option>OPM-MEG</option></select>
+            <select class="focus-ring h-8 rounded-md border border-border bg-surfaceMuted px-2 text-[13px] text-textPrimary"><option>Sort: popularity</option><option>Name (A-Z)</option><option>Recently added</option></select>
+          </div>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div class="card rounded-lg p-4">
+            <div class="mb-3 flex items-start justify-between">
+              <div class="flex h-10 w-10 items-center justify-center rounded-md bg-accentMuted text-accent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+              </div>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-accentMuted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>public sample</span>
+            </div>
+            <h2 class="text-[15px] font-semibold">MNE Sample — Auditory Evoked Fields</h2>
+            <p class="mt-1 text-[13px] text-textSecondary">Passive auditory oddball following, 4-min recording used in the MNE tutorials.</p>
+            <dl class="mt-3 space-y-1 text-[12px]">
+              <div class="flex justify-between"><dt class="text-textMuted">System</dt><dd class="font-mono">SQUID · Vectorview 306</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Sampling</dt><dd class="font-mono">1000 Hz · 4 min</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Events</dt><dd class="font-mono">STI 014 · 015</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Licence</dt><dd class="text-textPrimary">CC BY 4.0</dd></div>
+            </dl>
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <span class="text-[12px] text-textMuted">1.4M opens · ★ 92</span>
+              <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-[13px] font-semibold text-background hover:bg-accentHover">Open sample</button>
+            </div>
+          </div>
+
+          <div class="card rounded-lg p-4">
+            <div class="mb-3 flex items-start justify-between">
+              <div class="flex h-10 w-10 items-center justify-center rounded-md bg-successMuted text-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+              </div>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-accentMuted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>public sample</span>
+            </div>
+            <h2 class="text-[15px] font-semibold">OPM-Datasets · Walking (UCL FIL)</h2>
+            <p class="mt-1 text-[13px] text-textSecondary">64-channel OPM recording of locomotion, reference channels incl.</p>
+            <dl class="mt-3 space-y-1 text-[12px]">
+              <div class="flex justify-between"><dt class="text-textMuted">System</dt><dd class="font-mono">OPM · UCL FIL 64</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Sampling</dt><dd class="font-mono">1000 Hz · 3 epochs</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Traits</dt><dd class="font-mono">triaxial refs</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Licence</dt><dd class="text-textPrimary">CC0 1.0</dd></div>
+            </dl>
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <span class="text-[12px] text-textMuted">214K opens · ★ 48</span>
+              <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-[13px] font-semibold text-background hover:bg-accentHover">Open sample</button>
+            </div>
+          </div>
+
+          <div class="card rounded-lg p-4">
+            <div class="mb-3 flex items-start justify-between">
+              <div class="flex h-10 w-10 items-center justify-center rounded-md bg-surfaceRaised text-textSecondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+              </div>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-accentMuted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>public sample</span>
+            </div>
+            <h2 class="text-[15px] font-semibold">OpenNeuro ds003377 · Motor Imitation</h2>
+            <p class="mt-1 text-[13px] text-textSecondary">Action observation and execution MEG, 28 subjects (subset: 2).</p>
+            <dl class="mt-3 space-y-1 text-[12px]">
+              <div class="flex justify-between"><dt class="text-textMuted">System</dt><dd class="font-mono">SQUID · Elekta 306</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Sampling</dt><dd class="font-mono">1000 Hz · 2 × 10 min</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Events</dt><dd class="font-mono">imitative · spontaneous</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Licence</dt><dd class="text-textPrimary">CC BY 4.0</dd></div>
+            </dl>
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <span class="text-[12px] text-textMuted">96K opens · ★ 31</span>
+              <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-[13px] font-semibold text-background hover:bg-accentHover">Open sample</button>
+            </div>
+          </div>
+
+          <div class="card rounded-lg p-4">
+            <div class="mb-3 flex items-start justify-between">
+              <div class="flex h-10 w-10 items-center justify-center rounded-md bg-accentMuted text-accent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+              </div>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-accentMuted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>public sample</span>
+            </div>
+            <h2 class="text-[15px] font-semibold">Cam-CAN · REST &amp; AEF</h2>
+            <p class="mt-1 text-[13px] text-textSecondary">Resting-state and auditory evoked field from the Cam-CAN MEG subset.</p>
+            <dl class="mt-3 space-y-1 text-[12px]">
+              <div class="flex justify-between"><dt class="text-textMuted">System</dt><dd class="font-mono">SQUID · Vectorview 306</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Sampling</dt><dd class="font-mono">1000 Hz · 8 min</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Events</dt><dd class="font-mono">tones 300–3000 ms</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Licence</dt><dd class="text-textPrimary">CC BY 4.0</dd></div>
+            </dl>
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <span class="text-[12px] text-textMuted">71K opens · ★ 27</span>
+              <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-[13px] font-semibold text-background hover:bg-accentHover">Open sample</button>
+            </div>
+          </div>
+
+          <div class="card rounded-lg p-4">
+            <div class="mb-3 flex items-start justify-between">
+              <div class="flex h-10 w-10 items-center justify-center rounded-md bg-accentMuted text-accent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+              </div>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-accentMuted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>public sample</span>
+            </div>
+            <h2 class="text-[15px] font-semibold">MNE-sleep · Sleep staging</h2>
+            <p class="mt-1 text-[13px] text-textSecondary">Overnight polysomnography with EEG + MEG-derived staging events.</p>
+            <dl class="mt-3 space-y-1 text-[12px]">
+              <div class="flex justify-between"><dt class="text-textMuted">System</dt><dd class="font-mono">SQUID · Vectorview</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Sampling</dt><dd class="font-mono">200 Hz · 12 h</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Events</dt><dd class="font-mono">sleep stages</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Licence</dt><dd class="text-textPrimary">CC BY 4.0</dd></div>
+            </dl>
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <span class="text-[12px] text-textMuted">184K opens · ★ 39</span>
+              <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-[13px] font-semibold text-background hover:bg-accentHover">Open sample</button>
+            </div>
+          </div>
+
+          <div class="card rounded-lg p-4">
+            <div class="mb-3 flex items-start justify-between">
+              <div class="flex h-10 w-10 items-center justify-center rounded-md bg-surfaceRaised text-textSecondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+              </div>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-accentMuted px-2.5 py-0.5 text-[12px] font-medium text-accent"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>public sample</span>
+            </div>
+            <h2 class="text-[15px] font-semibold">OpenNeuro ds004110 · Memory</h2>
+            <p class="mt-1 text-[13px] text-textSecondary">Episodic memory encoding, OPM-MEG from a commercial system.</p>
+            <dl class="mt-3 space-y-1 text-[12px]">
+              <div class="flex justify-between"><dt class="text-textMuted">System</dt><dd class="font-mono">OPM · 128 ch</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Sampling</dt><dd class="font-mono">1000 Hz · 1 × 20 min</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Events</dt><dd class="font-mono">cue · probe</dd></div>
+              <div class="flex justify-between"><dt class="text-textMuted">Licence</dt><dd class="text-textPrimary">CC BY 4.0</dd></div>
+            </dl>
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-3">
+              <span class="text-[12px] text-textMuted">52K opens · ★ 18</span>
+              <button class="focus-ring inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-[13px] font-semibold text-background hover:bg-accentHover">Open sample</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-center gap-3 text-[13px]">
+          <span class="text-textMuted">Showing 6 of 12 samples</span>
+          <a href="#" class="font-medium text-accent hover:text-accentHover">View all →</a>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
