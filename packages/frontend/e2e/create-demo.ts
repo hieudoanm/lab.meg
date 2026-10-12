@@ -121,35 +121,38 @@ async function main() {
     await page.getByRole('heading', { name: 'Sign in' }).waitFor();
     await sleep(1200);
 
-    // Register a user via the development token endpoint
+    // Register a user via the development token endpoint (creates user with password)
     const identity = await mintDevelopmentToken('demo@meg-lab.local', 'Demo Researcher');
 
-    // Set session cookies directly using the development token
-    await page.context().addCookies([
+    // Test direct login via API
+    const loginResp = await callApi<{ access_token: string; user: { display_name: string } }>(
+      '/auth/login',
+      '', // no token needed for login
       {
-        name: 'meg-lab_session',
-        value: identity.access_token,
-        domain: 'localhost',
-        path: '/',
-        httpOnly: true,
-        sameSite: 'Lax',
-        secure: false,
+        method: 'POST',
+        body: JSON.stringify({ email: 'demo@meg-lab.local', password: 'demopassword123' }),
       },
-      {
-        name: 'meg-lab_user',
-        value: Buffer.from(
-          JSON.stringify({ displayName: 'Demo Researcher', email: 'demo@meg-lab.local' }),
-        ).toString('base64'),
-        domain: 'localhost',
-        path: '/',
-        httpOnly: false,
-        sameSite: 'Lax',
-        secure: false,
-      },
-    ]);
+    );
+    console.log('Direct login response:', loginResp.status, loginResp.body);
 
-    // Navigate to dashboard with a full page load to ensure cookies are read
-    await page.goto(`${baseUrl}/app`, { waitUntil: 'networkidle' });
+    // Now login via the login form
+    await page.getByLabel('Email address').fill('demo@meg-lab.local');
+    await page.getByLabel('Password').fill('demopassword123');
+
+    // Submit form by clicking the Sign in button
+    await page.getByRole('button', { name: 'Sign in' }).click();
+
+    // Wait for either navigation to /app or error message
+    await Promise.race([
+      page.waitForURL(/\/app/, { timeout: 15000 }),
+      page
+        .getByRole('alert')
+        .waitFor({ timeout: 15000 })
+        .then(async () => {
+          const errorText = await page.getByRole('alert').textContent();
+          throw new Error(`Login failed: ${errorText}`);
+        }),
+    ]);
 
     // Wait for loading to complete or error
     await Promise.race([
