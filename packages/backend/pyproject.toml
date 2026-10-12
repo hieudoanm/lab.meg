@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-bids = ["mne-bids==0.13"]
+bids = ["mne-bids==0.20.0"]
 dev = [
     "httpx==0.28.1",
     "pytest>=8.3,<9",
