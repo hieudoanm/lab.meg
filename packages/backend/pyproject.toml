@@ -23,9 +23,9 @@ dependencies = [
 bids = ["mne-bids==0.20.0"]
 dev = [
     "httpx==0.28.1",
-    "pytest>=8.3,<9",
+    "pytest>=9,<10",
     "pytest-asyncio==0.26.0",
-    "ruff==0.8.6",
+    "ruff==0.17.0",
     "mypy==2.4.0",
 ]
 
