@@ -1,0 +1,21 @@
+/* TEAM */
+Team: MEG Lab Contributors
+Site: https://meg-lab.example.com
+GitHub: https://github.com/hieudoanm/meg-lab
+
+/* TECHNOLOGY */
+Stack: Next.js 16, React 19, TypeScript 6, Tailwind CSS 4
+API: FastAPI, Python, PostgreSQL, Redis
+Signals: MNE-Python, NumPy, Plotly.js, WebGL
+Auth: OIDC, JWT, HttpOnly sessions
+Testing: Vitest, Playwright, pytest
+CI/CD: GitHub Actions, Docker
+
+/* STANDARDS */
+HTML5, CSS3, ES2024
+Web App Manifest, Open Graph, Twitter Cards
+Accessibility: WCAG 2.1 AA
+
+/* CONTACT */
+Security: security@meg-lab.example.com
+Email: hello@meg-lab.example.com

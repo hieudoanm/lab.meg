@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MEG Lab — Signal Viewer</title>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','sans-serif'], mono: ['ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','monospace'] },
+  colors: {
+    background:'#0B0F14', surface:'#121821', surfaceMuted:'#1A2230', surfaceRaised:'#212B3A',
+    border:'#263244', borderStrong:'#35455C', textPrimary:'#E6EDF5', textSecondary:'#9BA9BC', textMuted:'#6B7A90',
+    accent:'#4C8DFF', accentHover:'#6BA1FF', accentMuted:'#1C3355',
+    success:'#3FB950', successMuted:'#16301F', warning:'#D9A441', warningMuted:'#33290F',
+    danger:'#F0554D', dangerMuted:'#3A1C1A', info:'#58A6FF', infoMuted:'#16283F', neutralState:'#5B6578',
+    canvas:'#05080B'
+  }
+} } };
+</script>
+<style>
+  :root{color-scheme:dark}
+  html,body{background:#0B0F14}
+  body{font-feature-settings:'cv02','cv03','cv04','cv11'}
+  .focus-ring:focus-visible{outline:2px solid #7FB2FF;outline-offset:2px;border-radius:6px}
+  .card{background:#121821;border:1px solid #263244}
+  input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:999px;background:#263244;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:12px;width:12px;border-radius:999px;background:#E6EDF5;border:2px solid #4C8DFF;cursor:pointer}
+</style>
+</head>
+<body class="h-screen overflow-hidden bg-background text-textPrimary antialiased font-sans text-[14px] leading-[22px]">
+<div class="flex h-screen">
+  <aside class="hidden w-52 shrink-0 flex-col border-r border-border bg-surface md:flex lg:w-56">
+    <div class="flex h-14 items-center gap-2.5 border-b border-border px-4">
+      <div class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-background">M</div>
+      <span class="text-[15px] font-semibold tracking-tight">MEG&nbsp;Lab</span>
+    </div>
+    <nav class="flex-1 space-y-0.5 overflow-y-auto p-2 text-sm">
+      <a href="03-dashboard.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+      <a href="04-projects.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>Projects</a>
+      <a href="07-dataset-detail.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Datasets</a>
+      <a href="#" class="focus-ring flex items-center gap-3 rounded-md bg-accentMuted px-3 py-2 font-medium text-textPrimary"><svg class="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Signal Viewer</a>
+      <a href="09-sensor-explorer.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M12 4v16M4 12h16"/></svg>Sensor Explorer</a>
+      <a href="10-pipelines.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3"/></svg>Pipelines</a>
+      <a href="#" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-3 3 3 3"/><path d="m16 9 3 3-3 3"/><path d="m13 5-2 14"/></svg>Notebooks</a>
+      <a href="14-explore.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="m14.5 9.5-1.8 4.7-4.7 1.8 1.8-4.7Z"/></svg>Explore</a>
+      <a href="15-settings.html" class="focus-ring flex items-center gap-3 rounded-md px-3 py-2 text-textSecondary hover:bg-surfaceMuted hover:text-textPrimary"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8L9.4 5.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg>Settings</a>
+    </nav>
+    <div class="border-t border-border px-4 py-3 text-[11px] text-textMuted">v0.1.0 · prototype</div>
+  </aside>
+
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header class="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-border bg-surface px-4 md:px-6">
+      <div class="flex min-w-0 items-center gap-2 text-[13px]">
+        <button class="focus-ring flex items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3 py-1.5"><span class="text-textMuted">Project</span><span class="font-medium">Auditory Evoked Fields</span><span class="rounded bg-accentMuted px-1.5 text-[11px] text-accent">private</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-3.5 w-3.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <span class="text-textMuted">/</span>
+        <span class="truncate font-medium">AEF-001</span>
+        <span class="rounded bg-surfaceMuted px-1.5 font-mono text-[11px] text-textSecondary">v3</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-successMuted px-2.5 py-0.5 text-[12px] font-medium text-success"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>Ready</span>
+        <button class="focus-ring inline-flex h-9 items-center gap-2 rounded-md border border-border bg-surfaceMuted px-3.5 text-[13px] font-medium text-textPrimary hover:bg-surfaceRaised"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search channel</button>
+        <button class="focus-ring inline-flex h-9 items-center gap-2 rounded-md bg-accent px-3.5 text-[13px] font-semibold text-background hover:bg-accentHover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M5 12h14M12 5v14"/></svg>Save view state</button>
+      </div>
+    </header>
+
+    <div class="flex min-h-0 flex-1">
+      <aside class="hidden w-64 shrink-0 overflow-y-auto border-r border-border bg-surface p-4 lg:block">
+        <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-textMuted">Channel selection</div>
+        <div class="space-y-1">
+          <button class="focus-ring flex w-full items-center justify-between rounded-md border border-border bg-surfaceMuted px-2.5 py-1.5 text-[13px]"><span>Gradiometers</span><span class="font-mono text-[12px] text-textMuted">204</span></button>
+          <button class="focus-ring flex w-full items-center justify-between rounded-md border border-border bg-surfaceMuted px-2.5 py-1.5 text-[13px]"><span>Magnetometers</span><span class="font-mono text-[12px] text-textMuted">102</span></button>
+          <button class="focus-ring flex w-full items-center justify-between rounded-md border border-border bg-surfaceMuted px-2.5 py-1.5 text-[13px]"><span>Reference / aux</span><span class="font-mono text-[12px] text-textMuted">9</span></button>
+        </div>
+
+        <div class="mb-3 mt-4 flex items-center gap-2 rounded-md border border-border bg-surfaceMuted px-2.5 py-1.5 text-[13px] text-textMuted">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" class="h-3.5 w-3.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span>MEG 04…</span>
+        </div>
+
+        <div class="mt-2 border-t border-border pt-4">
+          <div class="mb-2 flex items-center justify-between text-[13px] text-textSecondary">
+            <span>Visible traces</span>
+            <span class="font-mono text-[12px] text-textMuted">8 · 100 µV</span>
+          </div>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 text-[13px] text-textPrimary"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#B07CFF" /><span class="flex-1">MEG 0422</span><span class="font-mono text-[11px] text-textMuted">grad</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-textPrimary"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#B07CFF" /><span class="flex-1">MEG 0723</span><span class="font-mono text-[11px] text-textMuted">grad</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-textPrimary"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#B07CFF" /><span class="flex-1">MEG 1293</span><span class="font-mono text-[11px] text-textMuted">grad</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-textPrimary"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#B07CFF" /><span class="flex-1">MEG 1521</span><span class="font-mono text-[11px] text-textMuted">grad</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-textPrimary"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#42a5f5" /><span class="flex-1">MEG 0112</span><span class="font-mono text-[11px] text-textMuted">mag</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-textPrimary"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#42a5f5" /><span class="flex-1">MEG 1312</span><span class="font-mono text-[11px] text-textMuted">mag</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-textPrimary"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#42a5f5" /><span class="flex-1">MEG 1331</span><span class="font-mono text-[11px] text-textMuted">mag</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-danger"><input type="checkbox" checked class="checkbox checkbox-xs rounded border-border" style="--chkbg:#F0554D" /><span class="flex-1">MEG 0131</span><span class="rounded bg-dangerMuted px-1.5 font-mono text-[11px] text-danger">bad</span></label>
+            <label class="flex items-center gap-2 text-[13px] text-textMuted"><input type="checkbox" class="checkbox checkbox-xs rounded border-border" /><span class="flex-1">MEG 2142</span><span class="rounded bg-dangerMuted px-1.5 font-mono text-[11px] text-danger">bad</span></label>
+          </div>
+        </div>
+
+        <div class="mt-5 border-t border-border pt-4">
+          <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-textMuted">Filtering</div>
+          <div class="space-y-3">
+            <div>
+              <label class="mb-1.5 block text-[12px] text-textSecondary">Low-pass <span class="font-mono text-textMuted">40 Hz</span></label>
+              <select class="focus-ring h-8 w-full rounded-md border border-border bg-surfaceMuted px-2.5 text-[13px] text-textPrimary"><option>40 Hz</option><option>80 Hz</option><option>160 Hz</option><option>No filter</option></select>
+            </div>
+            <div>
+              <label class="mb-1.5 block text-[12px] text-textSecondary">High-pass <span class="font-mono text-textMuted">0.1 Hz</span></label>
+              <select class="focus-ring h-8 w-full rounded-md border border-border bg-surfaceMuted px-2.5 text-[13px] text-textPrimary"><option>0.1 Hz</option><option>1 Hz</option><option>No filter</option></select>
+            </div>
+            <label class="flex items-center justify-between text-[13px] text-textPrimary"><span>Notch 50 Hz</span><input type="checkbox" checked class="toggle toggle-sm" style="--tglbg:#4C8DFF" /></label>
+          </div>
+        </div>
+
+        <div class="mt-5 border-t border-border pt-4">
+          <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-textMuted">Scale</div>
+          <div>
+            <div class="mb-1.5 flex items-center justify-between text-[12px]"><span class="text-textSecondary">Amplitude</span><span class="font-mono text-textMuted">100 µV</span></div>
+            <input type="range" min="0" max="100" value="62" class="focus-ring w-full" />
+          </div>
+          <div>
+            <div class="mb-1.5 mt-2 flex items-center justify-between text-[12px]"><span class="text-textSecondary">Time zoom</span><span class="font-mono text-textMuted">2 s</span></div>
+            <input type="range" min="0" max="100" value="40" class="focus-ring w-full" />
+          </div>
+        </div>
+
+        <div class="mt-5 border-t border-border pt-4">
+          <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-textMuted">Events</div>
+          <ul class="space-y-1.5 text-[12px]">
+            <li class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-accent"></span><span class="flex-1">STI 014 · left</span><span class="font-mono text-textMuted">0.532 s</span></li>
+            <li class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-warning"></span><span class="flex-1">STI 014 · right</span><span class="font-mono text-textMuted">1.041 s</span></li>
+            <li class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-success"></span><span class="flex-1">STI 015 · 1 kHz</span><span class="font-mono text-textMuted">1.508 s</span></li>
+            <li class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-dangerMuted"></span><span class="flex-1">BAD segment</span><span class="font-mono text-textMuted">1.6–1.7 s</span></li>
+          </ul>
+        </div>
+
+        <div class="mt-5 border-t border-border pt-4">
+          <div class="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-textMuted">
+            <span>Annotations</span>
+            <button class="focus-ring text-accent hover:text-accentHover">＋ Add</button>
+          </div>
+          <ul class="space-y-2 text-[12px]">
+            <li class="rounded-md border border-border bg-surfaceMuted p-2">
+              <div class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-danger"></span><span class="font-medium">Eye saccade artifact</span></div>
+              <div class="mt-1 font-mono text-[11px] text-textMuted">t = 1.602 s · MEG 0131</div>
+            </li>
+            <li class="rounded-md border border-border bg-surfaceMuted p-2">
+              <div class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-warning"></span><span class="font-medium">Note: check layout</span></div>
+              <div class="mt-1 font-mono text-[11px] text-textMuted">t = 0.845 s · whole array</div>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <div class="flex min-w-0 flex-1 flex-col">
+        <div class="flex items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2 text-[12px] text-textSecondary">
+          <div class="flex items-center gap-4">
+            <span class="font-mono text-textPrimary">t = 1.204 s</span>
+            <span class="font-mono text-textMuted">Δt = 2.0 s</span>
+            <span class="hidden text-textMuted sm:inline">315 channels · filtered 0.1–40 Hz</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button class="focus-ring rounded-md border border-border bg-surfaceMuted px-2 py-1 text-textMuted hover:text-textPrimary" aria-label="Zoom out">−</button>
+            <button class="focus-ring rounded-md border border-border bg-surfaceMuted px-2 py-1 text-textMuted hover:text-textPrimary" aria-label="Zoom in">＋</button>
+            <button class="focus-ring rounded-md border border-border bg-surfaceMuted px-2 py-1 text-textMuted hover:text-textPrimary">Fit</button>
+          </div>
+        </div>
+
+        <div class="relative min-h-0 flex-1 overflow-hidden" style="background:#05080B">
+          <svg id="trace" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 h-full w-full"></svg>
+          <div class="pointer-events-none absolute left-1/2 top-0 h-full w-px" style="background:#4C8DFF;box-shadow:0 0 6px #4C8DFF"></div>
+          <div class="pointer-events-none absolute left-1/2 top-0 h-full w-[13px] origin-right -translate-x-1 border-2" style="background:rgba(76,141,255,.08);border-color:#4C8DFF"></div>
+        </div>
+
+        <div class="flex items-center justify-between gap-3 border-t border-border bg-surface px-4 py-2 text-[12px] text-textSecondary">
+          <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#B07CFF"></span>grad</span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#42a5f5"></span>mag</span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#F0554D"></span>bad</span>
+            <span class="hidden md:inline text-textMuted">Space to toggle channel · click trace to add annotation</span>
+          </div>
+          <span class="font-mono text-[11px] text-textMuted">1000 Hz · FIF · Neuromag Vectorview</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var width = 1200, height = 640;
+  var channels = [
+    { name: 'MEG 0422', type: 'grad', c: '#B07CFF', amp: 1.0, base: 24 },
+    { name: 'MEG 0723', type: 'grad', c: '#B07CFF', amp: 1.4, base: 24 },
+    { name: 'MEG 1293', type: 'grad', c: '#B07CFF', amp: 0.8, base: 24 },
+    { name: 'MEG 1521', type: 'grad', c: '#B07CFF', amp: 1.1, base: 24 },
+    { name: 'MEG 0112', type: 'mag', c: '#42a5f5', amp: 2.0, base: 24 },
+    { name: 'MEG 1312', type: 'mag', c: '#42a5f5', amp: 1.7, base: 24 },
+    { name: 'MEG 1331', type: 'mag', c: '#42a5f5', amp: 1.5, base: 24 },
+    { name: 'MEG 0131', type: 'bad', c: '#F0554D', amp: 3.2, base: 24 }
+  ];
+  var n = channels.length;
+  var rowH = (height - 60) / n;
+  function seed(k) { var x = Math.sin(k * 12.9898) * 43758.5453; return x - Math.floor(x); }
+  function lo(i) { return 0.55 * Math.sin(i * 0.13) + 0.35 * Math.sin(i * 0.037 + 1.3) + 0.18 * Math.sin(i * 0.71); }
+  function aef(i) { return Math.exp(-Math.pow((i - 0.53) * 9, 2)) - 0.6 * Math.exp(-Math.pow((i - 1.04) * 10, 2)) + 0.4 * Math.exp(-Math.pow((i - 1.51) * 9, 2)); }
+  var svg = document.getElementById('trace');
+  var out = '';
+  for (var ch = 0; ch < n; ch++) {
+    var yc = 30 + ch * rowH + rowH / 2 - 26;
+    out += '<text x="14" y="' + (yc - 9) + '" font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#9BA9BC">' + channels[ch].name + '</text>';
+    if (channels[ch].type === 'bad') {
+      out += '<text x="86" y="' + (yc - 9) + '" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#F0554D">bad</text>';
+    } else {
+      out += '<text x="86" y="' + (yc - 9) + '" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#4F5B6E">' + channels[ch].type + '</text>';
+    }
+    var pts = '';
+    var prevY = null;
+    for (var i = 0; i <= 1000; i++) {
+      var t = i / 500;
+      var noise = (seed(ch * 131 + i) - 0.5) * 0.55;
+      var val = lo(i) + channels[ch].amp * aef(t) + noise;
+      var x = 110 + i * (width - 140) / 1000;
+      var y = yc - val * rowH * 0.30;
+      pts += (x.toFixed(1) + ',' + y.toFixed(1) + ' ');
+    }
+    out += '<polyline points="' + pts.trim() + '" fill="none" stroke="' + channels[ch].c + '" stroke-width="1.1" opacity="0.95"/>';
+    var sepY = yc + rowH / 2;
+    out += '<line x1="110" y1="' + sepY + '" x2="1140" y2="' + sepY + '" stroke="#18212E" stroke-width="1"/>';
+  }
+  out += '<line x1="110" y1="40" x2="110" y2="600" stroke="#18212E" stroke-width="1"/>';
+  for (var t = 0.0; t <= 2.0001; t += 0.5) {
+    var tx = 110 + t * (width - 140) / 2;
+    out += '<text x="' + (tx - 16) + '" y="620" font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#6B7A90">' + t.toFixed(1) + ' s</text>';
+  }
+  var ev = [[0.532, '#4C8DFF', 0.9], [1.041, '#D9A441', 0.9], [1.508, '#3FB950', 0.9]];
+  for (var e = 0; e < ev.length; e++) {
+    var ex = 110 + ev[e][0] * (width - 140) / 2;
+    out += '<line x1="' + ex + '" y1="34" x2="' + ex + '" y2="602" stroke="' + ev[e][1] + '" stroke-width="1.2" stroke-dasharray="4 4" opacity="' + ev[e][2] + '"/>';
+  }
+  out += '<rect x="' + (110 + 1.6 * (width - 140) / 2) + '" y="34" width="' + (0.1 * (width - 140) / 2) + '" height="568" fill="#F0554D" opacity="0.07"/>';
+  svg.innerHTML = out;
+})();
+</script>
+</body>
+</html>

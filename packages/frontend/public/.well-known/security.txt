@@ -1,0 +1,9 @@
+# Security.txt for MEG Lab
+# https://securitytxt.org/
+
+Contact: mailto:security@meg-lab.example.com
+Contact: https://meg-lab.example.com/security
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://meg-lab.example.com/.well-known/security.txt
+Policy: https://github.com/hieudoanm/meg-lab/blob/master/SECURITY.md
