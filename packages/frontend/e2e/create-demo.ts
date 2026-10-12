@@ -124,8 +124,7 @@ async function main() {
     // Register a user via the development token endpoint
     const identity = await mintDevelopmentToken('demo@meg-lab.local', 'Demo Researcher');
 
-    // Set session cookies directly in browser context using the development token
-    // This mimics what the /api/session endpoint would do
+    // Set session cookies directly using the development token
     await page.context().addCookies([
       {
         name: 'meg-lab_session',
@@ -152,8 +151,16 @@ async function main() {
     // Navigate to dashboard with a full page load to ensure cookies are read
     await page.goto(`${baseUrl}/app`, { waitUntil: 'networkidle' });
 
-    // Wait for loading to complete
-    await page.getByText('Loading workspace…').waitFor({ state: 'hidden', timeout: 15000 });
+    // Wait for loading to complete or error
+    await Promise.race([
+      page.getByText('Loading workspace…').waitFor({ state: 'hidden', timeout: 15000 }),
+      page
+        .getByText('Something went wrong')
+        .waitFor({ timeout: 15000 })
+        .then(() => {
+          throw new Error('Workspace load failed');
+        }),
+    ]);
 
     // Debug: get page content
     const pageContent = await page.textContent('body');
