@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "positions": {
+    "users": { "x": 0, "y": 0 },
+    "projects": { "x": 320, "y": 0 },
+    "project_members": { "x": 640, "y": 0 },
+    "datasets": { "x": 320, "y": 320 },
+    "dataset_versions": { "x": 640, "y": 320 },
+    "recordings": { "x": 960, "y": 320 },
+    "file_assets": { "x": 0, "y": 640 },
+    "channels": { "x": 320, "y": 640 },
+    "sensor_configurations": { "x": 640, "y": 640 },
+    "event_sets": { "x": 960, "y": 640 },
+    "pipelines": { "x": 0, "y": 960 },
+    "pipeline_versions": { "x": 320, "y": 960 },
+    "experiment_runs": { "x": 640, "y": 960 },
+    "artifacts": { "x": 960, "y": 960 },
+    "usage_records": { "x": 0, "y": 1280 },
+    "audit_events": { "x": 320, "y": 1280 },
+    "outbox_events": { "x": 640, "y": 1280 }
+  },
+  "sizes": {
+    "users": { "w": 280, "h": 200 },
+    "projects": { "w": 280, "h": 240 },
+    "project_members": { "w": 280, "h": 200 },
+    "datasets": { "w": 280, "h": 240 },
+    "dataset_versions": { "w": 300, "h": 240 },
+    "recordings": { "w": 300, "h": 300 },
+    "file_assets": { "w": 300, "h": 240 },
+    "channels": { "w": 320, "h": 360 },
+    "sensor_configurations": { "w": 300, "h": 280 },
+    "event_sets": { "w": 300, "h": 240 },
+    "pipelines": { "w": 280, "h": 240 },
+    "pipeline_versions": { "w": 300, "h": 280 },
+    "experiment_runs": { "w": 320, "h": 340 },
+    "artifacts": { "w": 300, "h": 260 },
+    "usage_records": { "w": 280, "h": 240 },
+    "audit_events": { "w": 300, "h": 240 },
+    "outbox_events": { "w": 300, "h": 240 }
+  },
+  "groups": {
+    "identity": {
+      "tables": ["users", "projects", "project_members"],
+      "color": "#4C8DFF"
+    },
+    "data": {
+      "tables": [
+        "datasets",
+        "dataset_versions",
+        "recordings",
+        "file_assets",
+        "channels",
+        "sensor_configurations",
+        "event_sets"
+      ],
+      "color": "#42a5f5"
+    },
+    "compute": {
+      "tables": ["pipelines", "pipeline_versions", "experiment_runs", "artifacts"],
+      "color": "#B07CFF"
+    },
+    "platform": {
+      "tables": ["usage_records", "audit_events", "outbox_events"],
+      "color": "#F0554D"
+    }
+  },
+  "views": []
+}
