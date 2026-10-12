@@ -2,31 +2,31 @@
 name = "meg-lab-backend"
 version = "0.1.0"
 description = "MEG Lab backend: project-scoped MEG data management, sensor geometry, pipelines, and reproducible experiment runs."
-requires-python = ">=3.12,<3.15"
+requires-python = "==3.14.8"
 dependencies = [
-    "fastapi>=0.115,<1",
-    "uvicorn[standard]>=0.32,<1",
-    "pydantic>=2.9,<3",
-    "pydantic-settings>=2.5,<3",
-    "psycopg[binary,pool]>=3.2,<4",
-    "celery>=5.4,<6",
-    "redis>=5.2,<6",
-    "boto3>=1.35,<2",
-    "argon2-cffi>=23.1,<24",
-    "pyjwt>=2.9,<3",
-    "jsonschema>=4.23,<5",
-    "mne>=1.8,<2",
-    "numpy>=2.0,<3",
+    "fastapi==0.143.0",
+    "uvicorn[standard]==0.54.0",
+    "pydantic==2.14.1",
+    "pydantic-settings==2.15.0",
+    "psycopg[binary,pool]==3.3.6",
+    "celery==5.6.3",
+    "redis==5.3.1",
+    "boto3==1.43.111",
+    "argon2-cffi==23.1.0",
+    "pyjwt==2.15.1",
+    "jsonschema==4.26.0",
+    "mne==1.13.2",
+    "numpy==2.5.4",
 ]
 
 [project.optional-dependencies]
-bids = ["mne-bids>=0.13,<0.14"]
+bids = ["mne-bids==0.13"]
 dev = [
-    "httpx>=0.27,<1",
-    "pytest>=9,<10",
-    "pytest-asyncio>=0.24,<0.25",
-    "ruff>=0.7,<0.9",
-    "mypy>=1.13,<2",
+    "httpx==0.28.1",
+    "pytest>=8.3,<9",
+    "pytest-asyncio==0.24.0",
+    "ruff==0.8.6",
+    "mypy==1.20.2",
 ]
 
 [build-system]
