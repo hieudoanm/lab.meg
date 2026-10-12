@@ -12,7 +12,7 @@ dependencies = [
     "celery==5.6.3",
     "redis==8.1.0",
     "boto3==1.43.111",
-    "argon2-cffi==23.1.0",
+    "argon2-cffi==25.1.0",
     "pyjwt==2.15.1",
     "jsonschema==4.26.0",
     "mne==1.13.2",
@@ -20,11 +20,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-bids = ["mne-bids==0.13"]
+bids = ["mne-bids==0.20.0"]
 dev = [
     "httpx==0.28.1",
     "pytest>=8.3,<9",
-    "pytest-asyncio==0.24.0",
+    "pytest-asyncio==0.26.0",
     "ruff==0.17.0",
     "mypy==1.20.2",
 ]

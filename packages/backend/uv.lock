@@ -47,14 +47,14 @@ wheels = [
 
 [[package]]
 name = "argon2-cffi"
-version = "23.1.0"
+version = "25.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "argon2-cffi-bindings" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/31/fa/57ec2c6d16ecd2ba0cf15f3c7d1c3c2e7b5fcb83555ff56d7ab10888ec8f/argon2_cffi-23.1.0.tar.gz", hash = "sha256:879c3e79a2729ce768ebb7d36d4609e3a78a4ca2ec3a9f12286ca057e3d0db08", size = 42798, upload-time = "2023-08-15T14:13:12.711Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0e/89/ce5af8a7d472a67cc819d5d998aa8c82c5d860608c4db9f46f1162d7dab9/argon2_cffi-25.1.0.tar.gz", hash = "sha256:694ae5cc8a42f4c4e2bf2ca0e64e51e23a040c6a517a85074683d3959e1346c1", size = 45706, upload-time = "2025-06-03T06:55:32.073Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/6a/e8a041599e78b6b3752da48000b14c8d1e8a04ded09c88c714ba047f34f5/argon2_cffi-23.1.0-py3-none-any.whl", hash = "sha256:c670642b78ba29641818ab2e68bd4e6a78ba53b7eff7b4c3815ae16abf91c7ea", size = 15124, upload-time = "2023-08-15T14:13:10.752Z" },
+    { url = "https://files.pythonhosted.org/packages/4f/d3/a8b22fa575b297cd6e3e3b0155c7e25db170edf1c74783d6a31a2490b8d9/argon2_cffi-25.1.0-py3-none-any.whl", hash = "sha256:fdc8b074db390fccb6eb4a3604ae7231f219aa669a2652e0f20e16ba513d5741", size = 14657, upload-time = "2025-06-03T06:55:30.804Z" },
 ]
 
 [[package]]
@@ -765,14 +765,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "argon2-cffi", specifier = "==23.1.0" },
+    { name = "argon2-cffi", specifier = "==25.1.0" },
     { name = "boto3", specifier = "==1.43.111" },
     { name = "celery", specifier = "==5.6.3" },
     { name = "fastapi", specifier = "==0.143.0" },
     { name = "httpx", marker = "extra == 'dev'", specifier = "==0.28.1" },
     { name = "jsonschema", specifier = "==4.26.0" },
     { name = "mne", specifier = "==1.13.2" },
-    { name = "mne-bids", marker = "extra == 'bids'", specifier = "==0.13" },
+    { name = "mne-bids", marker = "extra == 'bids'", specifier = "==0.20.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = "==1.20.2" },
     { name = "numpy", specifier = "==2.5.4" },
     { name = "psycopg", extras = ["binary", "pool"], specifier = "==3.3.6" },
@@ -780,7 +780,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = "==2.15.0" },
     { name = "pyjwt", specifier = "==2.15.1" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3,<9" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = "==0.24.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = "==0.26.0" },
     { name = "redis", specifier = "==8.1.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.17.0" },
     { name = "uvicorn", extras = ["standard"], specifier = "==0.54.0" },
@@ -809,16 +809,16 @@ wheels = [
 
 [[package]]
 name = "mne-bids"
-version = "0.13"
+version = "0.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mne" },
     { name = "numpy" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/57/ab/b3f9dbc64cdeb9f7caab2bea9519a3ed62a1a5094b973e19594a012d89e7/mne-bids-0.13.tar.gz", hash = "sha256:5c0217e11d06175c98f26285c61bf28f13d38a39b056ad8e6a7ce2e33c3df766", size = 1226090, upload-time = "2023-08-21T11:37:47.237Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/68/86/fee96dbc4664e3fec6c98739870eded9fc08fdcbbc4509b205e59b74fb2f/mne_bids-0.20.0.tar.gz", hash = "sha256:8d196664a2f0a3bd2d5afd41777cf6cf43606201c3b9118ab43dc92758681c23", size = 163873, upload-time = "2026-09-29T00:00:56.019Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/95/8e/bc9e2aba2479311bf1278c378a736f9cfd3d8db62df788b3a8d06e6a41b0/mne_bids-0.13-py2.py3-none-any.whl", hash = "sha256:540374d9f07948679bdef7831b9861b9e4c9ea96f8c33a7c2e2245a6ac80f8ee", size = 1210162, upload-time = "2023-08-21T11:37:41.512Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/42/05928f81af2d0ceddfcbf2153e60bca7b6e3412c9dfe703b64a91f1e3a96/mne_bids-0.20.0-py3-none-any.whl", hash = "sha256:f4ffa7071b5f6f3472cfe6b5f538010b01560df8f0a7b2b4e1abeb7d09b915d0", size = 202484, upload-time = "2026-09-29T00:00:54.01Z" },
 ]
 
 [[package]]
@@ -1166,14 +1166,14 @@ wheels = [
 
 [[package]]
 name = "pytest-asyncio"
-version = "0.24.0"
+version = "0.26.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/52/6d/c6cf50ce320cf8611df7a1254d86233b3df7cc07f9b5f5cbcb82e08aa534/pytest_asyncio-0.24.0.tar.gz", hash = "sha256:d081d828e576d85f875399194281e92bf8a68d60d72d1a2faf2feddb6c46b276", size = 49855, upload-time = "2024-08-22T08:03:18.145Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8e/c4/453c52c659521066969523e87d85d54139bbd17b78f09532fb8eb8cdb58e/pytest_asyncio-0.26.0.tar.gz", hash = "sha256:c4df2a697648241ff39e7f0e4a73050b03f123f760673956cf0d72a4990e312f", size = 54156, upload-time = "2025-03-25T06:22:28.883Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/31/6607dab48616902f76885dfcf62c08d929796fc3b2d2318faf9fd54dbed9/pytest_asyncio-0.24.0-py3-none-any.whl", hash = "sha256:a811296ed596b69bf0b6f3dc40f83bcaf341b155a269052d82efa2b25ac7037b", size = 18024, upload-time = "2024-08-22T08:03:15.536Z" },
+    { url = "https://files.pythonhosted.org/packages/20/7f/338843f449ace853647ace35870874f69a764d251872ed1b4de9f234822c/pytest_asyncio-0.26.0-py3-none-any.whl", hash = "sha256:7b51ed894f4fbea1340262bdae5135797ebbe21d8638978e35d31c6d19f72fb0", size = 19694, upload-time = "2025-03-25T06:22:27.807Z" },
 ]
 
 [[package]]
