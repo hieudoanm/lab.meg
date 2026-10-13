@@ -2,7 +2,7 @@
 name = "meg-lab-backend"
 version = "0.1.0"
 description = "MEG Lab backend: project-scoped MEG data management, sensor geometry, pipelines, and reproducible experiment runs."
-requires-python = "==3.14.8"
+requires-python = "==3.15.0"
 dependencies = [
     "fastapi==0.143.0",
     "uvicorn[standard]==0.54.0",
