@@ -24,7 +24,7 @@ def _test_settings(**overrides: Any) -> Any:
         "app_env": "development",
         "auth_mode": "development",
         "auto_migrate": False,
-        "database_url": "postgresql+psycopg://meglab:meglab@localhost:5433/meglab",
+        "database_url": "postgresql://meglab:meglab@localhost:5433/meglab",
         "redis_url": "redis://localhost:6380/0",
         "storage_backend": "file",
         "storage_data_dir": str(storage_dir),

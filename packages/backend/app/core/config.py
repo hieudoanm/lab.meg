@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
     auto_migrate: bool = True
 
-    database_url: str = "postgresql+psycopg://meglab:meglab@localhost:5433/meglab"
+    database_url: str = "postgresql://meglab:meglab@localhost:5433/meglab"
     redis_url: str = "redis://localhost:6380/0"
     celery_broker_url: str | None = None
 

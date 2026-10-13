@@ -22,7 +22,7 @@ jobs:
       run:
         working-directory: packages/backend
     env:
-      DATABASE_URL: postgresql://meglab:meglab@localhost:5432/meglab
+      MEG_DATABASE_URL: postgresql://meglab:meglab@localhost:5432/meglab
       APP_ENV: test
       AUTH_MODE: development
     services:
