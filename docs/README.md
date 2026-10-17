@@ -2,33 +2,34 @@
 
 Product strategy · Functional requirements · Architecture · Data model · Delivery roadmap
 
-> This document is the product-strategy source. The normative implementation set is [`01`–`12`](#normative-documents) plus the [`api-specs/`](api-specs/), [`database/`](database/), and [`diagrams/`](diagrams/) assets. Where this document and the numbered documents disagree on implementation detail, the numbered documents govern.
+> This document is the product-strategy source. The normative implementation set is [`00`–`12`](#normative-documents) plus the [`06-api-specification/`](06-api-specification/), [`05-data-model/`](05-data-model/), and [`04-architecture/diagrams/`](04-architecture/diagrams/) assets. Where this document and the numbered documents disagree on implementation detail, the numbered documents govern.
 
 ## Normative documents
 
 | #   | Document                                                 | Governs                                                |
 | --- | -------------------------------------------------------- | ------------------------------------------------------ |
-| 01  | [`01-overview.md`](01-overview.md)                       | Product vision and scope                               |
-| 02  | [`02-requirements.md`](02-requirements.md)               | Functional/non-functional requirements (`FR-`, `NFR-`) |
-| 03  | [`03-user-stories.md`](03-user-stories.md)               | User goals and acceptance scenarios                    |
-| 04  | [`04-features.md`](04-features.md)                       | User-visible behaviour                                 |
-| 05  | [`05-architecture.md`](05-architecture.md)               | Module boundaries, request lifecycle, tenancy          |
-| 06  | [`06-data-model.md`](06-data-model.md)                   | Schema, constraints, state transitions                 |
-| 07  | [`07-api-spec.md`](07-api-spec.md)                       | REST contract, status codes, error envelope            |
-| 08  | [`08-tech-stack.md`](08-tech-stack.md)                   | Allowed technologies and dependency policy             |
-| 09  | [`09-design.md`](09-design.md)                           | UI tokens, layout, states, accessibility               |
-| 10  | [`10-testing-strategy.md`](10-testing-strategy.md)       | Test layers, fixtures, acceptance criteria             |
-| 11  | [`11-implementation-plan.md`](11-implementation-plan.md) | Phased delivery plan                                   |
-| 12  | [`12-deployment.md`](12-deployment.md)                   | Operations, CI, and Docker Compose deployment          |
+| 00  | [`00-overview.md`](00-overview.md)                       | Product vision and scope                               |
+| 01  | [`01-requirements/01-requirements.md`](01-requirements/01-requirements.md) | Functional/non-functional requirements (`FR-`, `NFR-`) |
+| 02  | [`02-features/02-features.md`](02-features/02-features.md) | User-visible behaviour                                 |
+| 03  | [`03-user-stories/03-user-stories.md`](03-user-stories/03-user-stories.md) | User goals and acceptance scenarios                    |
+| 04  | [`04-architecture/04-architecture.md`](04-architecture/04-architecture.md) | Module boundaries, request lifecycle, tenancy          |
+| 05  | [`05-data-model/05-data-model.md`](05-data-model/05-data-model.md) | Schema, constraints, state transitions                 |
+| 06  | [`06-api-specification/06-api-specification.md`](06-api-specification/06-api-specification.md) | REST contract, status codes, error envelope            |
+| 07  | [`07-ui-ux-design/07-ui-ux-design.md`](07-ui-ux-design/07-ui-ux-design.md) | UI tokens, layout, states, accessibility               |
+| 08  | [`08-tech-stack/08-tech-stack.md`](08-tech-stack/08-tech-stack.md) | Allowed technologies and dependency policy             |
+| 09  | [`09-testing-strategy/09-testing-strategy.md`](09-testing-strategy/09-testing-strategy.md) | Test layers, fixtures, acceptance criteria             |
+| 10  | [`10-implementation-plan/10-implementation-plan.md`](10-implementation-plan/10-implementation-plan.md) | Phased delivery plan                                   |
+| 11  | [`11-deployment/11-deployment.md`](11-deployment/11-deployment.md) | Operations, CI, and Docker Compose deployment          |
+| 12  | [`12-operations/12-operations.md`](12-operations/12-operations.md) | Operations (monitoring, backups, DR, rollback, security) |
 
 ### Supporting assets
 
 | Path                              | Purpose                                                                     |
 | --------------------------------- | --------------------------------------------------------------------------- |
-| [`api-specs/`](api-specs/)        | OpenAPI 3.1 contract (`api-spec.yaml`, `api-spec.json`)                     |
-| [`database/`](database/)          | DBML schema (`meg-lab.dbml`) and layout                                     |
-| [`diagrams/`](diagrams/)          | Mermaid diagrams (architecture, data flow, upload, experiment, end-to-end, CI/CD) |
-| [`design/`](design/)              | HTML design prototype (`html/`) and captured screenshots (`images/`)        |
+| [`06-api-specification/`](06-api-specification/) | OpenAPI 3.1 contract (`api-spec.yaml`, `api-spec.json`)                     |
+| [`05-data-model/`](05-data-model/) | DBML schema (`meg-lab.dbml`) and layout                                     |
+| [`04-architecture/diagrams/`](04-architecture/diagrams/) | Mermaid diagrams (architecture, data flow, upload, experiment, end-to-end, CI/CD) |
+| [`07-ui-ux-design/design/`](07-ui-ux-design/design/) | HTML design prototype (`html/`) and captured screenshots (`images/`)        |
 
 ---
 
