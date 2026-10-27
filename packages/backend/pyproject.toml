@@ -11,7 +11,7 @@ dependencies = [
     "psycopg[binary,pool]==3.3.6",
     "celery==5.6.3",
     "redis==8.1.0",
-    "boto3==1.43.119",
+    "boto3==1.43.120",
     "argon2-cffi==25.1.0",
     "pyjwt==2.15.1",
     "jsonschema==4.26.0",
