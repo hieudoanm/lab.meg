@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  UV_PYTHON: '3.15.0'
+  UV_PYTHON: "3.15.2"
   NODE_VERSION_FILE: packages/frontend/.nvmrc
 
 jobs:
@@ -45,8 +45,8 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@v10.3.3
         with:
-          version: '0.13.7'
-          python-version: '${{ env.UV_PYTHON }}'
+          version: "0.13.7"
+          python-version: "${{ env.UV_PYTHON }}"
           enable-cache: true
           cache-dependency-glob: packages/backend/uv.lock
 
@@ -94,7 +94,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: '${{ env.NODE_VERSION_FILE }}'
+          node-version-file: "${{ env.NODE_VERSION_FILE }}"
 
       - name: Cache pnpm store
         uses: actions/cache@v6.1.0
@@ -146,7 +146,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: '${{ env.NODE_VERSION_FILE }}'
+          node-version-file: "${{ env.NODE_VERSION_FILE }}"
 
       - name: Cache pnpm store
         uses: actions/cache@v6.1.0
@@ -177,17 +177,17 @@ jobs:
       - name: Run Trivy vulnerability scanner (filesystem)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH,MEDIUM'
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
           ignore-unfixed: true
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4.39.3
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
   tauri-build:
     name: Build Tauri (${{ matrix.os }})
@@ -199,18 +199,18 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            rust-targets: 'x86_64-apple-darwin,aarch64-apple-darwin'
-            system-deps: ''
+            rust-targets: "x86_64-apple-darwin,aarch64-apple-darwin"
+            system-deps: ""
             zip-app: true
           - os: ubuntu-latest
-            rust-targets: 'x86_64-unknown-linux-gnu'
+            rust-targets: "x86_64-unknown-linux-gnu"
             system-deps: |
               sudo apt-get update
               sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
             zip-app: false
           - os: windows-latest
-            rust-targets: 'x86_64-pc-windows-msvc'
-            system-deps: ''
+            rust-targets: "x86_64-pc-windows-msvc"
+            system-deps: ""
             zip-app: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -224,7 +224,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: '${{ env.NODE_VERSION_FILE }}'
+          node-version-file: "${{ env.NODE_VERSION_FILE }}"
 
       - name: Cache pnpm store
         uses: actions/cache@v6.1.0
@@ -246,7 +246,7 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2.9.3
         with:
-          workdir: packages/frontend/src-tauri
+          workspaces: packages/frontend/src-tauri -> target
 
       - name: Install system dependencies (Linux)
         if: matrix.os == 'ubuntu-latest'
